@@ -23,7 +23,5 @@ FLUSH PRIVILEGES;
 ```
 ## Running the Application
 
-step1: Build the project using Maven
-    mvn clean install
-step2: Run the application using Maven
-    mvn spring-boot:run
+- step1: Build the project using Maven : mvn clean install
+- step2: Run the application using Maven : mvn spring-boot:run
