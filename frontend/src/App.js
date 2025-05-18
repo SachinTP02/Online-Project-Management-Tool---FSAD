@@ -82,7 +82,7 @@ function Dashboard() {
   return (
     <div>
       <h2>Dashboard</h2>
-      <p>Welcome! This is your project management dashboard.</p>
+      <p>Welcome! This Project management dashboard.</p>
     </div>
   );
 }
