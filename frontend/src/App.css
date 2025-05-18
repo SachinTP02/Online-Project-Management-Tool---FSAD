@@ -1,0 +1,41 @@
+.App {
+  text-align: center;
+}
+
+.auth-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.auth-container h2 {
+  margin-bottom: 1rem;
+}
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+}
+.auth-container input {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+.auth-container button {
+  padding: 0.5rem;
+  font-size: 1rem;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.auth-container .error {
+  color: red;
+  margin-top: 0.5rem;
+}
+.auth-container p {
+  margin-top: 1rem;
+}
