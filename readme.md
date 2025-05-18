@@ -2,14 +2,8 @@
 
 A full-stack project management application with a Spring Boot backend and a React frontend. This tool allows users to register, log in, and manage projects, tasks, milestones, and reports efficiently.
 
-## Features
-- User authentication (register/login)
-- Project, task, milestone, and report management
-- Modern React frontend (React 18, React Router v6)
-- Secure Spring Boot backend (JWT, MySQL)
-- RESTful API
-
 ## Project Structure
+
 ```
 Online-Project-Management-Tool---FSAD/
 ├── frontend/      # React app (UI)
@@ -26,11 +20,11 @@ Online-Project-Management-Tool---FSAD/
 
 ## Setup & Run
 
-### 1. Clone the repository
+### 1. Clone the repository and switch to main branch
 ```sh
 git clone <your-repo-url>
 cd Online-Project-Management-Tool---FSAD
-git checkout added-frontend-and-auth-pages
+git checkout main
 ```
 
 ### 2. Backend (Spring Boot)
@@ -65,3 +59,6 @@ npm start
 - `node_modules/`, `build/`, `.env*` in `frontend/`
 - `target/`, `build/` in `server/`
 - IDE/project files (`.idea/`, `.vscode/`, etc.)
+
+## Notes
+- CORS is enabled for the React frontend (`http://localhost:3000`).
