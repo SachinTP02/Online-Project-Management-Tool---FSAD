@@ -1,17 +1,19 @@
 package com.fsad.opm.auth;
 
+import com.fsad.opm.config.JwtService;
 import com.fsad.opm.dto.AuthRequest;
 import com.fsad.opm.dto.AuthResponse;
 import com.fsad.opm.dto.RegisterRequest;
 import com.fsad.opm.model.Role;
 import com.fsad.opm.model.User;
 import com.fsad.opm.repository.UserRepository;
-import com.fsad.opm.util.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static com.fsad.opm.model.Status.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,8 @@ public class AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.DEVELOPER)
+                .role(request.getRole())
+                .status(PENDING)
                 .build();
         userRepository.save(user);
 
@@ -36,6 +39,12 @@ public class AuthService {
     }
 
     public AuthResponse authenticate(AuthRequest request) {
+        if (userRepository.findByUsername(request.getUsername()).isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        if (userRepository.findByUsername(request.getUsername()).get().getStatus() != ACCEPTED) {
+            throw new RuntimeException("User is not authenticated by Admin");
+        }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );

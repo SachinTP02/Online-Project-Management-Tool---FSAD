@@ -39,6 +39,10 @@ public class Task {
     @JoinColumn(name = "milestone_id")
     private Milestone milestone;
 
+    @ManyToOne
+    @JoinColumn(name = "project_id") // 🔥 This is the missing mapping
+    private Project project;
+
     @ManyToMany
     @JoinTable(
             name = "task_assignments",
