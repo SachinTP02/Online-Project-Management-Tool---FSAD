@@ -17,20 +17,12 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
-    private String title;
-
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "assigned_to_id")
-    private User assignedTo;
-
-    private LocalDate startDate;
-
-    private LocalDate endDate;
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
@@ -40,14 +32,6 @@ public class Task {
     private Milestone milestone;
 
     @ManyToOne
-    @JoinColumn(name = "project_id") // 🔥 This is the missing mapping
-    private Project project;
-
-    @ManyToMany
-    @JoinTable(
-            name = "task_assignments",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> assignedUsers;
+    @JoinColumn(name = "assigned_user") // foreign key in task table
+    private User assignedUser;
 }

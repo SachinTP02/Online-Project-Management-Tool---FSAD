@@ -19,7 +19,8 @@ public class MilestoneServiceImpl implements MilestoneService {
     public Milestone createMilestone(MilestoneRequest request) {
         Milestone milestone = Milestone.builder()
                 .name(request.getName())
-                .targetDate(request.getTargetDate())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
                 .build();
         return milestoneRepository.save(milestone);
     }
