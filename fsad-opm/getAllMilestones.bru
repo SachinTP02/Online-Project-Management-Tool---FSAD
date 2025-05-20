@@ -1,0 +1,20 @@
+meta {
+  name: getAllMilestones
+  type: http
+  seq: 10
+}
+
+get {
+  url: http://localhost:8080/api/milestones
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWNoaW4iLCJpYXQiOjE3NDc3MzgxNTksImV4cCI6MTc0Nzc3NDE1OX0.3RMhzdbSyqdglvNnMK-xVlOI5tPeKwkFLrvv5Thb0s0
+}
+
+body:json {
+  
+  
+}

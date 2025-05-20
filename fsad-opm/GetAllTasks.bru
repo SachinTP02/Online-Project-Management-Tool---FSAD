@@ -1,0 +1,25 @@
+meta {
+  name: GetAllTasks
+  type: http
+  seq: 12
+}
+
+post {
+  url: http://localhost:8080/api/tasks
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWNoaW4iLCJpYXQiOjE3NDc3Mzk0NTMsImV4cCI6MTc0Nzc3NTQ1M30.kHDN1OJ21N-5hJs3g86eUTw0U-MZXE27dvXHaCU5OEk
+}
+
+body:json {
+  {
+    "name": "Implement Login Feature",
+    "description": "Create login screen and integrate with backend",
+    "projectId": 1,
+    "milestoneId": 1,
+    "assignedUserId": 1
+  }
+}
