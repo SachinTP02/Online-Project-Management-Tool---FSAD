@@ -102,10 +102,7 @@ npm start
 - Description: Creates a new project if the provided owner is authenticated and accepted by an admin.
 
 - Request Body:
-
-json
-Copy
-Edit
+  
 {
   "name": "New Internal Tool",
   "description": "Tool for automating internal workflows",
@@ -136,3 +133,191 @@ json
   "description": "Tool for automating internal workflows",
   "ownerUsername": "john_doe"
 }
+
+## 4.3  Create a Milestone
+
+- URL: POST /api/milestones
+
+- Description: Creates a new milestone with a name, start date, and end date.
+
+- Request Body:
+- 
+{
+  "name": "Design Phase Completion",
+  "startDate": "2025-06-01",
+  "endDate": "2025-06-15"
+}
+
+
+- Sample Response:
+- 
+{
+  "id": 1,
+  "name": "Design Phase Completion",
+  "startDate": "2025-06-01",
+  "endDate": "2025-06-15"
+}
+
+
+## 4.4 Get All Milestones
+
+- URL: GET /api/projects
+
+- Description: Fetches a list of all existing projects.
+
+- Responses:
+
+json
+[
+  {
+    "id": 1,
+    "name": "Frontend Implementation",
+    "startDate": "2025-06-01",
+    "endDate": "2025-06-15"
+  },
+  {
+    "id": 2,
+    "name": "Backend Implementation",
+    "startDate": "2025-07-01",
+    "endDate": "2025-08-15"
+  }
+]
+
+## 4.5  Create a Task
+
+- URL: POST /api/tasks
+
+- Description: Creates a new task.
+
+- Request Body:
+- 
+{
+  "name": "Implement register Feature",
+  "description": "Create register screen and integrate with backend",
+  "projectId": 2,
+  "milestoneId": 2,
+  "assignedUserId": 4
+}
+
+
+- Sample Response:
+- 
+{
+  "id": 2,
+  "name": "Implement register Feature",
+  "description": "Create register screen and integrate with backend",
+  "project": {
+    "id": 2,
+    "name": "Project Apollo",
+    "description": "A project to develop next-generation spacecraft.",
+    "ownerUsername": "ananthu"
+  },
+  "status": "TODO",
+  "milestone": {
+    "id": 2,
+    "name": "Backend Implementation",
+    "startDate": "2025-07-01",
+    "endDate": "2025-08-15"
+  },
+  "assignedUser": {
+    "id": 4,
+    "username": "bob",
+    "email": "bob@example.com",
+    "password": "$2a$10$sx8pwvyyRWxLyZlJ57lJZ..iyMv94JpQUPpMczORZQB5nYUoy1TWq",
+    "role": "DEVELOPER",
+    "status": null,
+    "enabled": true,
+    "credentialsNonExpired": true,
+    "accountNonExpired": true,
+    "accountNonLocked": true,
+    "authorities": [
+      {
+        "authority": "ROLE_DEVELOPER"
+      }
+    ]
+  }
+}
+
+
+## 4.6 Get All Tasks
+
+- URL: GET /api/tasks
+
+- Description: Fetches a list of all existing tasks.
+
+- Responses:
+
+json
+[
+  {
+    "id": 1,
+    "name": "Implement Login Feature",
+    "description": "Create login screen and integrate with backend",
+    "project": {
+      "id": 1,
+      "name": "Project Apollo",
+      "description": "A project to develop next-generation spacecraft.",
+      "ownerUsername": null
+    },
+    "status": "TODO",
+    "milestone": {
+      "id": 1,
+      "name": "Frontend Implementation",
+      "startDate": "2025-06-01",
+      "endDate": "2025-06-15"
+    },
+    "assignedUser": {
+      "id": 1,
+      "username": "john",
+      "email": "john@example.com",
+      "password": "$2a$10$lmK3NYbs.5iy7VGPsdONt..WFvqKXQ8OEmMIgMAd5G8FkuWOhX3Pq",
+      "role": "DEVELOPER",
+      "status": null,
+      "enabled": true,
+      "credentialsNonExpired": true,
+      "accountNonExpired": true,
+      "accountNonLocked": true,
+      "authorities": [
+        {
+          "authority": "ROLE_DEVELOPER"
+        }
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "name": "Implement register Feature",
+    "description": "Create register screen and integrate with backend",
+    "project": {
+      "id": 2,
+      "name": "Project Apollo",
+      "description": "A project to develop next-generation spacecraft.",
+      "ownerUsername": "ananthu"
+    },
+    "status": "TODO",
+    "milestone": {
+      "id": 2,
+      "name": "Backend Implementation",
+      "startDate": "2025-07-01",
+      "endDate": "2025-08-15"
+    },
+    "assignedUser": {
+      "id": 4,
+      "username": "bob",
+      "email": "bob@example.com",
+      "password": "$2a$10$sx8pwvyyRWxLyZlJ57lJZ..iyMv94JpQUPpMczORZQB5nYUoy1TWq",
+      "role": "DEVELOPER",
+      "status": null,
+      "enabled": true,
+      "credentialsNonExpired": true,
+      "accountNonExpired": true,
+      "accountNonLocked": true,
+      "authorities": [
+        {
+          "authority": "ROLE_DEVELOPER"
+        }
+      ]
+    }
+  }
+]
+
