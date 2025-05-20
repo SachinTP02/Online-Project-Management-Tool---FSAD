@@ -1,0 +1,30 @@
+meta {
+  name: CreateProject
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8080/api/projects
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFudGh1IiwiaWF0IjoxNzQ3NTA5NDg4LCJleHAiOjE3NDc1NDU0ODh9.adc7ohHPw8zBGLU-jdul1QkifQFA5VqThfwszo5yQ6M
+}
+
+body:json {
+  {
+    "name": "Project Apollo",
+    "description": "A project to develop next-generation spacecraft.",
+    "startDate": "2025-06-01",
+    "endDate": "2025-12-15",
+    "ownername": "ananthu"
+  }
+  
+}

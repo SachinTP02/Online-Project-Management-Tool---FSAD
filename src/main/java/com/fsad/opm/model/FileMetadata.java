@@ -3,25 +3,27 @@ package com.fsad.opm.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
-@Table(name = "milestones")
+@Table(name = "files")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Milestone {
+public class FileMetadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String fileName;
 
-    private LocalDate targetDate;
+    private String fileType;
+
+    private String filePath;
+
+    private long fileSize;
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+    @JoinColumn(name = "uploaded_by")
+    private User uploadedBy;
 }
