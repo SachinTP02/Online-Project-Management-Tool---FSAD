@@ -8,6 +8,6 @@ import java.time.LocalDate;
 public class MilestoneRequest {
     private String name;
     private String description;
-    private LocalDate targetDate;
-    private Long projectId;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
