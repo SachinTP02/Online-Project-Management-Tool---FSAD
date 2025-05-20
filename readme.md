@@ -90,3 +90,49 @@ npm start
 
 ## Notes
 - CORS is enabled for the React frontend (`http://localhost:3000`).
+
+
+
+### 4. API ENDPOINTS
+
+## 4.1 Create A Project
+
+- URL: POST /api/projects
+
+- Description: Creates a new project if the provided owner is authenticated and accepted by an admin.
+
+- Request Body:
+
+json
+Copy
+Edit
+{
+  "name": "New Internal Tool",
+  "description": "Tool for automating internal workflows",
+  "ownername": "john_doe"
+}
+
+- Sample Response:
+- 
+{
+  "id": 1,
+  "name": "New Internal Tool",
+  "description": "Tool for automating internal workflows",
+  "ownerUsername": "john_doe"
+}
+
+## 4.2 Get All Projects
+
+- URL: GET /api/projects
+
+- Description: Fetches a list of all existing projects.
+
+- Responses:
+
+json
+{
+  "id": 1,
+  "name": "New Internal Tool",
+  "description": "Tool for automating internal workflows",
+  "ownerUsername": "john_doe"
+}
