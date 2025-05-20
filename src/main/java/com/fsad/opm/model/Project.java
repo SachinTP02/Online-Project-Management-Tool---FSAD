@@ -22,19 +22,6 @@ public class Project {
 
     private String description;
 
-    private LocalDate startDate;
-
-    private LocalDate endDate;
-
     @Column(name = "owner_username")
     private String ownerUsername;
-
-//    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProjectReport> reports;
-//
-//    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Task> tasks;
-//
-//    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Milestone> milestones;
 }
