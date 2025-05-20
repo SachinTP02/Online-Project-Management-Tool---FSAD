@@ -10,6 +10,8 @@ import com.fsad.opm.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.fsad.opm.model.Status.ACCEPTED;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
@@ -20,8 +22,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponse createProject(CreateProjectRequest requestDTO) {
 
+        // Check if the user is authenticated
         userRepository.findByUsername(requestDTO.getOwnername())
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
+                .ifPresent(user -> {
+                    if (user.getStatus() != ACCEPTED) {
+                        throw new RuntimeException("User is not authenticated by Admin");
+                    }
+                });
 
         Project project = Project.builder()
                 .name(requestDTO.getName())
