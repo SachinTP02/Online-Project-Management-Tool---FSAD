@@ -3,12 +3,15 @@ package com.fsad.opm.service.impl;
 import com.fsad.opm.dto.CreateProjectRequest;
 import com.fsad.opm.dto.ProjectResponse;
 import com.fsad.opm.model.Project;
+import com.fsad.opm.model.Task;
 import com.fsad.opm.model.User;
 import com.fsad.opm.repository.ProjectRepository;
 import com.fsad.opm.repository.UserRepository;
 import com.fsad.opm.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.fsad.opm.model.Status.ACCEPTED;
 
@@ -44,5 +47,10 @@ public class ProjectServiceImpl implements ProjectService {
                 .description(savedProject.getDescription())
                 .ownerUsername(savedProject.getOwnerUsername())
                 .build();
+    }
+
+    @Override
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
     }
 }
