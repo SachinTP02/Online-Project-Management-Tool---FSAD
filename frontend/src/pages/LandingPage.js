@@ -78,6 +78,7 @@ export default function LandingPage() {
 			const step = Math.max(1, Math.ceil(end / (duration / 16)));
 			let current = 0;
 			const animate = () => {
+        if (!ref.current) return;
 				current += step;
 				if (current > end) current = end;
 				ref.current.textContent = current;

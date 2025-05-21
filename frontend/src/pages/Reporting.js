@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaChartLine, FaPlusCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 
 const mockReports = [
@@ -10,6 +11,7 @@ const mockReports = [
 export default function Reporting() {
   const [reports, setReports] = useState(mockReports);
   const [form, setForm] = useState({ title: '', summary: '', date: '' });
+  const navigate = useNavigate();
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
   const handleAdd = e => {
@@ -20,9 +22,38 @@ export default function Reporting() {
 
   return (
     <div className="feature-page">
-      <div className="revamp-header-row">
-        <FaChartLine className="feature-icon" style={{ fontSize: 36, color: '#3b82f6', marginRight: 12 }} />
-        <h2 className="revamp-title" style={{ margin: 0 }}>Project Reporting</h2>
+      <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <FaChartLine className="feature-icon" style={{ fontSize: 36, color: '#3b82f6', marginRight: 12 }} />
+          <h2 className="revamp-title" style={{ margin: 0 }}>Project Reporting</h2>
+        </div>
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            background: '#2563eb',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 8,
+            padding: '8px 22px',
+            fontWeight: 600,
+            fontSize: 15,
+            cursor: 'pointer',
+            boxShadow: '0 1px 4px #dbeafe',
+            marginLeft: 16,
+            marginRight: 12,
+            transition: 'background 0.2s, box-shadow 0.2s',
+          }}
+          onMouseOver={e => {
+            e.currentTarget.style.background = '#1d4ed8';
+            e.currentTarget.style.boxShadow = '0 2px 8px #93c5fd';
+          }}
+          onMouseOut={e => {
+            e.currentTarget.style.background = '#2563eb';
+            e.currentTarget.style.boxShadow = '0 1px 4px #dbeafe';
+          }}
+        >
+          Back to Home
+        </button>
       </div>
       <form className="feature-form revamp-form" onSubmit={handleAdd} style={{
         marginBottom: 32,
