@@ -31,7 +31,11 @@ public class Task {
     @JoinColumn(name = "milestone_id")
     private Milestone milestone;
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_user") // foreign key in task table
-    private User assignedUser;
+    @ManyToMany
+    @JoinTable(
+            name = "task_assignments",
+            joinColumns = @JoinColumn(name = "task_id"),           // Foreign key referencing Task
+            inverseJoinColumns = @JoinColumn(name = "user_id")     // Foreign key referencing User
+    )
+    private Set<User> assignedUsers;
 }

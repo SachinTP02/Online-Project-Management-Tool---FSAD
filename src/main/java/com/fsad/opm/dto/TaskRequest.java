@@ -3,6 +3,7 @@ package com.fsad.opm.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class TaskRequest {
@@ -10,5 +11,5 @@ public class TaskRequest {
     private String description;
     private Long projectId;
     private Long milestoneId;
-    private Long assignedUserId;
+    private Set<Long> assignedUserIds;
 }
