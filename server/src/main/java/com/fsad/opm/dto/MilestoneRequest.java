@@ -7,5 +7,6 @@ import java.time.LocalDate;
 @Data
 public class MilestoneRequest {
     private String name;
-    private LocalDate targetDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
