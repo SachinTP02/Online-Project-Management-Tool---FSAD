@@ -40,7 +40,7 @@ public class AuthService {
         userRepository.save(user);
 
         String jwt = jwtService.generateToken(user);
-        return new AuthResponse(jwt);
+        return new AuthResponse(jwt, user.getRole().name());
     }
 
     public AuthResponse authenticate(AuthRequest request) {
@@ -55,7 +55,7 @@ public class AuthService {
         );
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
         String jwt = jwtService.generateToken(user);
-        return new AuthResponse(jwt);
+        return new AuthResponse(jwt, user.getRole().name());
     }
 
     public ResponseEntity<?> getPendingUsers(String token) {

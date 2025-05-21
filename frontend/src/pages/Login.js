@@ -20,11 +20,8 @@ function Login({ onSuccess }) {
       if (!response.ok) throw new Error('Invalid credentials');
       const data = await response.json();
       localStorage.setItem('token', data.token);
-      // --- Set role for admin access ---
-      if (username.toLowerCase() === 'sample') {
-        localStorage.setItem('role', 'admin');
-      } else {
-        localStorage.setItem('role', 'user');
+      if (data.role) {
+        localStorage.setItem('role', data.role.toLowerCase());
       }
       if (onSuccess) onSuccess(username);
       else navigate('/dashboard');

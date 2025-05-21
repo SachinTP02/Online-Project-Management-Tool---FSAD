@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaUserShield, FaPlusCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
@@ -11,9 +11,56 @@ const mockComplaints = [
 export default function Admin() {
   const [complaints, setComplaints] = useState(mockComplaints);
   const [form, setForm] = useState({ user: '', message: '', date: '', status: 'Open' });
+  const [pendingUsers, setPendingUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [userError, setUserError] = useState('');
   const userRole = localStorage.getItem('role');
   const isAdmin = userRole === 'admin';
   const navigate = useNavigate();
+
+  const refreshPendingUsers = () => {
+    setLoadingUsers(true);
+    setUserError('');
+    fetch('http://localhost:8080/api/auth/pending-users', {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch users');
+        return res.json();
+      })
+      .then(data => {
+        // Support both direct array and { body: [...] } response
+        const users = Array.isArray(data) ? data : (Array.isArray(data.body) ? data.body : []);
+        setPendingUsers(users);
+        setLoadingUsers(false);
+      })
+      .catch((err) => {
+        setUserError('Failed to load pending users: ' + (err.message || 'Unknown error'));
+        setLoadingUsers(false);
+      });
+  };
+
+  useEffect(() => {
+    if (isAdmin) {
+      refreshPendingUsers();
+    }
+  }, [isAdmin]);
+
+  const handleUserAction = (username, status) => {
+    fetch('http://localhost:8080/api/auth/statusUpdate', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      body: JSON.stringify({ username, status })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to update user');
+        setPendingUsers(pendingUsers.filter(u => u.username !== username));
+      })
+      .catch(() => setUserError('Failed to update user status'));
+  };
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
   const handleAdd = e => {
@@ -70,7 +117,7 @@ export default function Admin() {
       <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <FaUserShield className="feature-icon" style={{ fontSize: 36, color: '#3b82f6', marginRight: 12 }} />
-          <h2 className="revamp-title">Administration / Complaints</h2>
+          <h2 className="revamp-title">Administration</h2>
         </div>
         <button
           onClick={() => navigate('/')}
@@ -99,6 +146,40 @@ export default function Admin() {
         >
           Back to Home
         </button>
+      </div>
+      <div style={{ margin: '32px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <h3 style={{ fontWeight: 600, fontSize: 20 }}>Pending User Approvals</h3>
+          <button onClick={refreshPendingUsers} style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 16px', fontWeight: 500, cursor: 'pointer' }}>Refresh</button>
+        </div>
+        {loadingUsers ? <div>Loading users...</div> : null}
+        {userError && <div style={{ color: 'red', marginBottom: 8 }}>{userError}</div>}
+        <table style={{ width: '100%', maxWidth: 700, background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #e0e7ef', marginBottom: 24 }}>
+          <thead>
+            <tr style={{ background: '#f1f5f9' }}>
+              <th style={{ padding: 10 }}>Username</th>
+              <th style={{ padding: 10 }}>Email</th>
+              <th style={{ padding: 10 }}>Role</th>
+              <th style={{ padding: 10 }}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pendingUsers.map(user => (
+              <tr key={user.username}>
+                <td style={{ padding: 10 }}>{user.username}</td>
+                <td style={{ padding: 10 }}>{user.email}</td>
+                <td style={{ padding: 10 }}>{user.role}</td>
+                <td style={{ padding: 10 }}>
+                  <button style={{ marginRight: 8, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 12px', cursor: 'pointer' }} onClick={() => handleUserAction(user.username, 'ACCEPTED')}>Approve</button>
+                  <button style={{ background: '#ef4444', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 12px', cursor: 'pointer' }} onClick={() => handleUserAction(user.username, 'REJECTED')}>Reject</button>
+                </td>
+              </tr>
+            ))}
+            {pendingUsers.length === 0 && !loadingUsers && (
+              <tr><td colSpan={4} style={{ textAlign: 'center', color: '#888', padding: 16 }}>No pending users</td></tr>
+            )}
+          </tbody>
+        </table>
       </div>
       <form className="feature-form revamp-form" onSubmit={handleAdd} style={{
         marginBottom: 32,
