@@ -192,20 +192,20 @@ json
 - Request Body:
 - 
 {
-  "name": "Implement register Feature",
-  "description": "Create register screen and integrate with backend",
+  "name": "Design Database Schema",
+  "description": "Create and finalize the DB schema for the new feature.",
   "projectId": 2,
   "milestoneId": 2,
-  "assignedUserId": 4
+  "assignedUserIds": [10, 11]
 }
 
 
 - Sample Response:
 - 
 {
-  "id": 2,
-  "name": "Implement register Feature",
-  "description": "Create register screen and integrate with backend",
+  "id": 3,
+  "name": "Design Database Schema",
+  "description": "Create and finalize the DB schema for the new feature.",
   "project": {
     "id": 2,
     "name": "Project Apollo",
@@ -219,25 +219,43 @@ json
     "startDate": "2025-07-01",
     "endDate": "2025-08-15"
   },
-  "assignedUser": {
-    "id": 4,
-    "username": "bob",
-    "email": "bob@example.com",
-    "password": "$2a$10$sx8pwvyyRWxLyZlJ57lJZ..iyMv94JpQUPpMczORZQB5nYUoy1TWq",
-    "role": "DEVELOPER",
-    "status": null,
-    "enabled": true,
-    "credentialsNonExpired": true,
-    "accountNonExpired": true,
-    "accountNonLocked": true,
-    "authorities": [
-      {
-        "authority": "ROLE_DEVELOPER"
-      }
-    ]
-  }
+  "assignedUsers": [
+    {
+      "id": 11,
+      "username": "sachin1",
+      "email": "sachin1@example.com",
+      "password": "$2a$10$3/Az21mC1ovOQFLO340UK.tAeUEYk6Pk.LGLbguVogr.INw2KD9dW",
+      "role": "DEVELOPER",
+      "status": "PENDING",
+      "enabled": true,
+      "authorities": [
+        {
+          "authority": "ROLE_DEVELOPER"
+        }
+      ],
+      "accountNonExpired": true,
+      "accountNonLocked": true,
+      "credentialsNonExpired": true
+    },
+    {
+      "id": 10,
+      "username": "sachin",
+      "email": "sachin@example.com",
+      "password": "$2a$10$9ns6hwv0/cqOpgEtJbnkAus58uvQHFPDE0nqVrhQUR4txLHdDMXwi",
+      "role": "DEVELOPER",
+      "status": "ACCEPTED",
+      "enabled": true,
+      "authorities": [
+        {
+          "authority": "ROLE_DEVELOPER"
+        }
+      ],
+      "accountNonExpired": true,
+      "accountNonLocked": true,
+      "credentialsNonExpired": true
+    }
+  ]
 }
-
 
 ## 4.6 Get All Tasks
 
