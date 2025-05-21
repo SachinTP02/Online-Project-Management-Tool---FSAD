@@ -40,7 +40,26 @@ public class ProjectReportService {
     }
 
     public List<ProjectReport> getReportsForProject(Long projectId) {
+
         return reportRepo.findByProjectId(projectId);
+
     }
+
+    public byte[] generatePdf(ProjectReport report) throws IOException {
+        String html = "<html><body><h1>" + report.getProjectName() + "</h1><p>" +
+                report.getSummary() + "</p></body></html>";
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.useFastMode();
+        builder.withHtmlContent(html, null);
+        builder.toStream(out);
+        builder.run();
+
+        return out.toByteArray();
+    }
+
+
 }
 

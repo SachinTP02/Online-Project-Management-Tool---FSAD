@@ -29,4 +29,18 @@ public class ProjectReportController {
     public ResponseEntity<List<ProjectReport>> getReports(@PathVariable Long projectId) {
         return ResponseEntity.ok(reportService.getReportsForProject(projectId));
     }
+
+    @GetMapping("/{projectId}/pdf")
+    public ResponseEntity<byte[]> getReportPdf(@PathVariable Long projectId) throws IOException {
+        ProjectReport report = reportService.getReports("WEEKLY")
+                .stream().filter(r -> r.getId().equals(projectId)).findFirst().orElse(null);
+        if (report == null) return ResponseEntity.notFound().build();
+
+        byte[] pdf = reportService.generatePdf(report);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
 }
