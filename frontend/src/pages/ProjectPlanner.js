@@ -66,7 +66,7 @@ export default function ProjectPlanner() {
       <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <FaTasks className="feature-icon" style={{ fontSize: 36, color: '#3b82f6', marginRight: 12 }} />
-          <h2 className="revamp-title" style={{ margin: 0 }}>Project Planner</h2>
+          <h2 className="revamp-title">Project Planner</h2>
         </div>
         <button
           onClick={() => navigate('/')}
@@ -217,14 +217,14 @@ export default function ProjectPlanner() {
           {tasks.map(t => (
             <div className="revamp-feature-card planner-card" key={t.id} style={{ minWidth: 220, maxWidth: 320, margin: '0 auto', borderTop: `4px solid ${statusColors[t.status] || '#d1d5db'}` }}>
               <div className="revamp-feature-content">
-                <h4 style={{ margin: '0 0 8px 0', fontWeight: 600 }}>{t.name}</h4>
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: 14, color: '#64748b', marginBottom: 4 }}>
-                  <FaUser style={{ marginRight: 6, color: '#6366f1' }} /> {t.assignedTo ? t.assignedTo.username || t.assignedTo : ''}
+                <h4 className="revamp-feature-title">{t.name}</h4>
+                <div className="revamp-feature-meta">
+                  <FaUser className="revamp-feature-icon" /> {t.assignedTo ? t.assignedTo.username || t.assignedTo : ''}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: 13, color: '#94a3b8', marginBottom: 8 }}>
-                  <FaCalendarAlt style={{ marginRight: 6, color: '#f59e42' }} /> Due: {t.due || t.endDate || ''}
+                <div className="revamp-feature-meta">
+                  <FaCalendarAlt className="revamp-feature-icon" /> Due: {t.due || t.endDate || ''}
                 </div>
-                <span style={{ background: statusColors[t.status] || '#64748b', color: '#fff', borderRadius: 8, padding: '2px 10px', fontSize: 13, fontWeight: 500 }}>{t.status}</span>
+                <span className="revamp-feature-status" style={{ background: statusColors[t.status] || '#64748b' }}>{t.status}</span>
               </div>
             </div>
           ))}

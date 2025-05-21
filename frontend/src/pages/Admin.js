@@ -28,7 +28,7 @@ export default function Admin() {
         <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <FaUserShield className="feature-icon" style={{ fontSize: 36, color: '#3b82f6', marginRight: 12 }} />
-            <h2 className="revamp-title" style={{ margin: 0 }}>Administration / Complaints</h2>
+            <h2 className="revamp-title">Administration / Complaints</h2>
           </div>
           <button
             onClick={() => navigate('/')}
@@ -70,7 +70,7 @@ export default function Admin() {
       <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <FaUserShield className="feature-icon" style={{ fontSize: 36, color: '#3b82f6', marginRight: 12 }} />
-          <h2 className="revamp-title" style={{ margin: 0 }}>Administration / Complaints</h2>
+          <h2 className="revamp-title">Administration / Complaints</h2>
         </div>
         <button
           onClick={() => navigate('/')}

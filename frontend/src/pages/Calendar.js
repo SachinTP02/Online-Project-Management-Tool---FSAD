@@ -107,68 +107,40 @@ export default function Calendar() {
   return (
     <div className="feature-page" style={{ background: '#f3f6fa', minHeight: '100vh', paddingBottom: 32 }}>
       <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 18 }}>
-        <h2 style={{ marginLeft: 32, fontWeight: 900, fontSize: 28, color: '#232946', letterSpacing: 0.5 }}>Work Calendar (Project Events)</h2>
+        <h2 className="revamp-title">Work Calendar (Project Events)</h2>
         <button
           onClick={() => navigate('/')}
+          className="revamp-cta-btn"
           style={{
-            background: '#2563eb',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            padding: '8px 22px',
-            fontWeight: 600,
-            fontSize: 15,
-            cursor: 'pointer',
-            boxShadow: '0 1px 4px #dbeafe',
             marginLeft: 16,
             marginRight: 32,
-            transition: 'background 0.2s, box-shadow 0.2s',
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.background = '#1d4ed8';
-            e.currentTarget.style.boxShadow = '0 2px 8px #93c5fd';
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.background = '#2563eb';
-            e.currentTarget.style.boxShadow = '0 1px 4px #dbeafe';
           }}
         >
           Back to Home
         </button>
       </div>
       {/* Modern color-coded legend for project events only */}
-      <div style={{ display: 'flex', gap: 22, marginLeft: 40, marginTop: 18, marginBottom: 8, alignItems: 'center', fontWeight: 600, fontSize: 15 }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><span style={{ width: 18, height: 18, background: '#22c55e', borderRadius: 5, display: 'inline-block', border: '2px solid #16a34a', boxShadow: '0 1px 4px #22c55e33' }}></span> Meeting</span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><span style={{ width: 18, height: 18, background: '#ef4444', borderRadius: 5, display: 'inline-block', border: '2px solid #b91c1c', boxShadow: '0 1px 4px #ef444433' }}></span> Deadline</span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><span style={{ width: 18, height: 18, background: '#3b82f6', borderRadius: 5, display: 'inline-block', border: '2px solid #1d4ed8', boxShadow: '0 1px 4px #3b82f633' }}></span> Milestone</span>
+      <div className="revamp-feature-legend" style={{ marginLeft: 40, marginTop: 18, marginBottom: 8 }}>
+        <span className="revamp-feature-legend-item"><span className="revamp-feature-legend-color" style={{ background: '#22c55e', border: '2px solid #16a34a' }}></span> Meeting</span>
+        <span className="revamp-feature-legend-item"><span className="revamp-feature-legend-color" style={{ background: '#ef4444', border: '2px solid #b91c1c' }}></span> Deadline</span>
+        <span className="revamp-feature-legend-item"><span className="revamp-feature-legend-color" style={{ background: '#3b82f6', border: '2px solid #1d4ed8' }}></span> Milestone</span>
       </div>
-      <div style={{ margin: '24px 0 18px 0', display: 'flex', alignItems: 'center', gap: 16, marginLeft: 40 }}>
+      <div className="revamp-feature-actions" style={{ marginLeft: 40 }}>
         <button
           onClick={() => setAdding(a => !a)}
-          style={{
-            background: adding ? '#e0e7ef' : '#3b82f6',
-            color: adding ? '#2563eb' : '#fff',
-            border: 'none',
-            borderRadius: 8,
-            padding: '8px 18px',
-            fontWeight: 600,
-            fontSize: 15,
-            cursor: 'pointer',
-            boxShadow: '0 1px 4px #dbeafe',
-            transition: 'background 0.2s, box-shadow 0.2s',
-          }}
+          className={`revamp-cta-btn ${adding ? 'revamp-cta-btn-cancel' : ''}`}
         >
           {adding ? 'Cancel' : 'Add Project Event'}
         </button>
         {adding && (
-          <form onSubmit={handleAddEvent} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <form onSubmit={handleAddEvent} className="revamp-feature-form">
             <input
               name="title"
               value={form.title}
               onChange={handleFormChange}
               placeholder="Event Title"
               required
-              style={{ borderRadius: 8, border: '1px solid #d1d5db', padding: '8px 12px', fontSize: 15, minWidth: 120 }}
+              className="revamp-feature-input"
             />
             <input
               name="date"
@@ -176,31 +148,31 @@ export default function Calendar() {
               onChange={handleFormChange}
               type="date"
               required
-              style={{ borderRadius: 8, border: '1px solid #d1d5db', padding: '8px 12px', fontSize: 15 }}
+              className="revamp-feature-input"
             />
             <select
               name="type"
               value={form.type}
               onChange={handleFormChange}
-              style={{ borderRadius: 8, border: '1px solid #d1d5db', padding: '8px 12px', fontSize: 15 }}
+              className="revamp-feature-select"
             >
               <option value="Meeting">Meeting</option>
               <option value="Deadline">Deadline</option>
               <option value="Milestone">Milestone</option>
             </select>
-            <button type="submit" style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>
+            <button type="submit" className="revamp-cta-btn">
               Add
             </button>
           </form>
         )}
       </div>
-      <div style={{ height: 600, background: '#fff', borderRadius: 22, boxShadow: '0 8px 32px #e0e7ef', padding: 24, marginTop: 24, border: '2.5px solid #e0e7ef', maxWidth: 1100, marginLeft: 'auto', marginRight: 'auto' }}>
+      <div className="revamp-feature-calendar">
         <BigCalendar
           localizer={localizer}
           events={events}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 560, fontSize: 16, background: '#fff', borderRadius: 18 }}
+          style={{ height: 560 }}
           eventPropGetter={eventPropGetter}
           views={['month', 'agenda']}
           popup

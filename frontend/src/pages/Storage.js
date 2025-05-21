@@ -47,7 +47,7 @@ export default function Storage() {
       <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <FaCloudUploadAlt className="feature-icon" style={{ fontSize: 36, color: '#3b82f6', marginRight: 12 }} />
-          <h2 className="revamp-title" style={{ margin: 0 }}>Online Storage</h2>
+          <h2 className="revamp-title">Online Storage</h2>
         </div>
         <button
           onClick={() => navigate('/')}

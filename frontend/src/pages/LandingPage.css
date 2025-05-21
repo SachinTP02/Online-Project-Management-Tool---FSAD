@@ -276,21 +276,21 @@
   margin-bottom: 0.1rem; /* Reduce space below content */
 }
 .revamp-title {
-  font-size: 2.7rem;
+  font-size: 3.0rem; /* Increased from 2.7rem */
   font-weight: 900;
   margin: 0.5rem 0 0.2rem 0;
   letter-spacing: 0.01em;
   color: #232946;
 }
 .revamp-subtitle {
-  font-size: 1.3rem;
+  font-size: 1.6rem; /* Increased from 1.3rem */
   font-weight: 600;
   color: var(--primary);
   margin-bottom: 1.2rem;
 }
 .revamp-desc {
   color: #6c6f7b;
-  font-size: 1.1rem;
+  font-size: 1.25rem; /* Increased from 1.1rem */
   margin-bottom: 2.2rem;
 }
 .revamp-cta-row {
