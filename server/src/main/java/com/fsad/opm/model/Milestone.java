@@ -16,12 +16,7 @@ public class Milestone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
-    private LocalDate targetDate;
-
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
