@@ -10,7 +10,9 @@ import com.fsad.opm.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,15 +31,20 @@ public class TaskServiceImpl implements TaskService {
         Project project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        User user = userRepository.findById(request.getAssignedUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Set<User> users = new HashSet<>(userRepository.findAllById(request.getAssignedUserIds()));
 
+        if (users.size() != request.getAssignedUserIds().size()) {
+            throw new RuntimeException("One or more users not found");
+        }
+        if (users.isEmpty()) {
+            throw new RuntimeException("At least one user must be assigned to the task");
+        }
         Task task = Task.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .project(project)
                 .milestone(milestone)
-                .assignedUser(user)
+                .assignedUsers(users)
                 .status(TaskStatus.TODO)
                 .build();
 
