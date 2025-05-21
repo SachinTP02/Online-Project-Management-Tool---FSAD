@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, Link } from 'react-router-dom';
 import './App.css';
 import LandingPage from './pages/LandingPage';
+import ProjectPlanner from './pages/ProjectPlanner';
+import Reporting from './pages/Reporting';
+import Storage from './pages/Storage';
+import Calendar from './pages/Calendar';
+import Admin from './pages/Admin';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -96,6 +101,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/planner" element={<ProjectPlanner />} />
+        <Route path="/reporting" element={<Reporting />} />
+        <Route path="/storage" element={<Storage />} />
+        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </Router>
   );

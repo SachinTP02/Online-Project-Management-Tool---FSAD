@@ -276,21 +276,21 @@
   margin-bottom: 0.1rem; /* Reduce space below content */
 }
 .revamp-title {
-  font-size: 2.7rem;
+  font-size: 3.0rem; /* Increased from 2.7rem */
   font-weight: 900;
   margin: 0.5rem 0 0.2rem 0;
   letter-spacing: 0.01em;
   color: #232946;
 }
 .revamp-subtitle {
-  font-size: 1.3rem;
+  font-size: 1.6rem; /* Increased from 1.3rem */
   font-weight: 600;
   color: var(--primary);
   margin-bottom: 1.2rem;
 }
 .revamp-desc {
   color: #6c6f7b;
-  font-size: 1.1rem;
+  font-size: 1.25rem; /* Increased from 1.1rem */
   margin-bottom: 2.2rem;
 }
 .revamp-cta-row {
@@ -695,4 +695,140 @@
   .revamp-features {
     padding: 2rem 1vw 2.5rem 1vw;
   }
+}
+
+.landing-dialog-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.landing-dialog {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px #0003;
+  padding: 40px 32px 32px 32px;
+  min-width: 340px;
+  min-height: 320px;
+  max-width: 95vw;
+  max-height: 95vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInDialog 0.2s;
+}
+.landing-dialog-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #888;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s;
+}
+.landing-dialog-close:hover {
+  color: #d32f2f;
+}
+@keyframes fadeInDialog {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.landing-dialog-custom {
+  min-width: 370px;
+  min-height: 340px;
+  padding: 36px 32px 32px 32px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px #ffb3b5, 0 2px 8px #0001;
+  background: linear-gradient(135deg, #f7faff 80%, #e3eaff 100%);
+  border: 1.5px solid #ff3b3f;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInDialog 0.2s;
+}
+.landing-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.landing-user-avatar {
+  background: #ff3b3f;
+  color: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px #1976d233;
+}
+.landing-user-name {
+  font-weight: 600;
+  color: #ff3b3f;
+  font-size: 1.1rem;
+}
+.auth-container {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.auth-container h2 {
+  color: #ff3b3f;
+  margin-bottom: 18px;
+}
+.auth-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.auth-container input {
+  padding: 10px 12px;
+  border: 1.2px solid #b3c6e0;
+  border-radius: 7px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.auth-container input:focus {
+  border: 1.5px solid #ff3b3f;
+}
+.auth-container button[type="submit"] {
+  background: #ff3b3f;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.auth-container button[type="submit"]:hover {
+  background: #ff3b3f;
+}
+.auth-container .error {
+  color: #d32f2f;
+  font-size: 0.98rem;
+  margin-top: 4px;
+}
+.auth-container .link {
+  color: #ff3b3f;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 4px;
 }
