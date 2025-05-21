@@ -1,4 +1,5 @@
 package com.fsad.opm.dto;
+import com.fsad.opm.model.Role;
 
 import lombok.*;
 
@@ -10,4 +11,5 @@ public class RegisterRequest {
     private String username;
     private String email;
     private String password;
+    private Role role;
 }

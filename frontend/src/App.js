@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Link } from 'react-router-dom';
 import './App.css';
 import LandingPage from './pages/LandingPage';
 import ProjectPlanner from './pages/ProjectPlanner';
@@ -88,7 +88,7 @@ function Dashboard() {
   return (
     <div>
       <h2>Dashboard</h2>
-      <p>Welcome! This is your project management dashboard.</p>
+      <p>Welcome! This Project management dashboard.</p>
     </div>
   );
 }
@@ -97,7 +97,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />

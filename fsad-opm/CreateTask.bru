@@ -1,0 +1,25 @@
+meta {
+  name: CreateTask
+  type: http
+  seq: 11
+}
+
+post {
+  url: http://localhost:8080/api/tasks
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWNoaW4iLCJpYXQiOjE3NDc3Mzk2NDUsImV4cCI6MTc0Nzc3NTY0NX0.qmCU6ergO-nppwmQh394iVUcxYuOzO-i3p7r5TnbpCY
+}
+
+body:json {
+  {
+    "name": "Implement register Feature",
+    "description": "Create register screen and integrate with backend",
+    "projectId": 2,
+    "milestoneId": 2,
+    "assignedUserId": 4
+  }
+}

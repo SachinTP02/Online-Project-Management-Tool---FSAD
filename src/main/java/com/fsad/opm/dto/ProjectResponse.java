@@ -1,13 +1,16 @@
 package com.fsad.opm.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
+
 @Data
-public class MilestoneRequest {
+@Builder
+public class ProjectResponse {
+    private Long id;
     private String name;
     private String description;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String ownerUsername;
 }

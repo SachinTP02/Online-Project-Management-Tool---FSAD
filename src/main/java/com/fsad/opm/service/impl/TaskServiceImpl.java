@@ -1,10 +1,9 @@
 package com.fsad.opm.service.impl;
 
 import com.fsad.opm.dto.TaskRequest;
-import com.fsad.opm.model.Milestone;
-import com.fsad.opm.model.Task;
-import com.fsad.opm.model.User;
+import com.fsad.opm.model.*;
 import com.fsad.opm.repository.MilestoneRepository;
+import com.fsad.opm.repository.ProjectRepository;
 import com.fsad.opm.repository.TaskRepository;
 import com.fsad.opm.repository.UserRepository;
 import com.fsad.opm.service.TaskService;
@@ -20,11 +19,15 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final MilestoneRepository milestoneRepository;
     private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
 
     @Override
     public Task createTask(TaskRequest request) {
         Milestone milestone = milestoneRepository.findById(request.getMilestoneId())
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
+
+        Project project = projectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new RuntimeException("Project not found"));
 
         User user = userRepository.findById(request.getAssignedUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -32,10 +35,10 @@ public class TaskServiceImpl implements TaskService {
         Task task = Task.builder()
                 .name(request.getName())
                 .description(request.getDescription())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .project(project)
                 .milestone(milestone)
-                .assignedTo(user)
+                .assignedUser(user)
+                .status(TaskStatus.TODO)
                 .build();
 
         return taskRepository.save(task);

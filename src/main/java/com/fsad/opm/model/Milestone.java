@@ -16,8 +16,7 @@ public class Milestone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
-    private LocalDate targetDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

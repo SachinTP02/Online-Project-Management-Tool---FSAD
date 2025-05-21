@@ -17,20 +17,12 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
-    private String title;
-
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "assigned_to_id")
-    private User assignedTo;
-
-    private LocalDate startDate;
-
-    private LocalDate endDate;
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
@@ -39,11 +31,7 @@ public class Task {
     @JoinColumn(name = "milestone_id")
     private Milestone milestone;
 
-    @ManyToMany
-    @JoinTable(
-            name = "task_assignments",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> assignedUsers;
+    @ManyToOne
+    @JoinColumn(name = "assigned_user") // foreign key in task table
+    private User assignedUser;
 }
