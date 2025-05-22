@@ -13,4 +13,8 @@ public class ProjectResponse {
     private String name;
     private String description;
     private String ownerUsername;
+    private Long ownerId;
+    private Long milestoneId;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
