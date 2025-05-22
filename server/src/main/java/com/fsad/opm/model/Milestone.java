@@ -19,4 +19,5 @@ public class Milestone {
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDate targetDate;
 }
