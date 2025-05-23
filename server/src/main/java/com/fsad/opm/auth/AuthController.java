@@ -3,7 +3,7 @@ package com.fsad.opm.auth;
 import com.fsad.opm.dto.AuthRequest;
 import com.fsad.opm.dto.AuthResponse;
 import com.fsad.opm.dto.RegisterRequest;
-import com.fsad.opm.dto.StatusUpdateRequest;
+import com.fsad.opm.dto.UserStatusUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,7 @@ public class AuthController {
 
     @PutMapping("/statusUpdate")
     public ResponseEntity<?> updateUserStatus(@RequestHeader("Authorization") String token,
-                                              @RequestBody StatusUpdateRequest request) {
+                                              @RequestBody UserStatusUpdateRequest request) {
         return ResponseEntity.ok(authService.updateUserStatus(token, request));
     }
 
