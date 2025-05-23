@@ -4,7 +4,7 @@ import com.fsad.opm.config.JwtService;
 import com.fsad.opm.dto.AuthRequest;
 import com.fsad.opm.dto.AuthResponse;
 import com.fsad.opm.dto.RegisterRequest;
-import com.fsad.opm.dto.StatusUpdateRequest;
+import com.fsad.opm.dto.UserStatusUpdateRequest;
 import com.fsad.opm.model.Role;
 import com.fsad.opm.model.Status;
 import com.fsad.opm.model.User;
@@ -75,7 +75,7 @@ public class AuthService {
     }
 
 
-    public ResponseEntity<?>  updateUserStatus(String token, StatusUpdateRequest request) {
+    public ResponseEntity<?>  updateUserStatus(String token, UserStatusUpdateRequest request) {
 
             String username = jwtService.extractUsername(token.replace("Bearer ", ""));
             User currentUser = userRepository.findByUsername(username)
