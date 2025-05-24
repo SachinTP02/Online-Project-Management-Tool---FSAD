@@ -1,236 +1,180 @@
-import React, { useState } from 'react';
-import { FaTasks, FaUser, FaCalendarAlt, FaPlusCircle } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './LandingPage.css';
+import { useParams } from 'react-router-dom';
 
-const statusColors = {
-    'To Do': '#fbbf24',
-    'In Progress': '#3b82f6',
-    'Done': '#22c55e',
-};
+const TaskPlanner = () => {
+    const { projectId } = useParams();
+    const [project, setProject] = useState(null);
+    const [tasks, setTasks] = useState([]);
+    const [milestones, setMilestones] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-const dummyTasks = [
-    {
-        id: 1,
-        name: 'Design UI Mockups',
-        assignedTo: { username: 'alice' },
-        due: '2025-06-10',
-        status: 'To Do',
-    },
-    {
-        id: 2,
-        name: 'Setup Database',
-        assignedTo: { username: 'bob' },
-        due: '2025-06-12',
-        status: 'In Progress',
-    },
-    {
-        id: 3,
-        name: 'API Integration',
-        assignedTo: { username: 'carol' },
-        due: '2025-06-15',
-        status: 'Done',
-    },
-];
+    const [formData, setFormData] = useState({
+        name: '',
+        description: '',
+        milestoneId: '',
+        assignedUserIds: [],
+    });
 
-export default function ProjectPlanner() {
-    const [tasks, setTasks] = useState(dummyTasks);
-    const [form, setForm] = useState({ name: '', assignedTo: '', due: '', status: 'To Do' });
-    const [loading] = useState(false);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+    const token = localStorage.getItem('token');
 
-    const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [projectRes, tasksRes, milestonesRes, usersRes] = await Promise.all([
+                    axios.get(`http://localhost:8080/api/projects/${projectId}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get(`http://localhost:8080/api/tasks/project/${projectId}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get('http://localhost:8080/api/milestones', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get('http://localhost:8080/api/users', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                ]);
 
-    // Add task locally
-    const handleAdd = async e => {
-        e.preventDefault();
-        setError('');
-        if (!form.name || !form.assignedTo || !form.due) {
-            setError('Please fill all fields');
-            return;
-        }
-        const newTask = {
-            id: tasks.length + 1,
-            name: form.name,
-            assignedTo: { username: form.assignedTo },
-            due: form.due,
-            status: form.status,
+                setProject(projectRes.data);
+                setTasks(tasksRes.data);
+                setMilestones(milestonesRes.data);
+                setUsers(usersRes.data);
+                setLoading(false);
+            } catch (err) {
+                console.error('Error fetching data:', err);
+                setError('Failed to load data');
+                setLoading(false);
+            }
         };
-        setTasks([...tasks, newTask]);
-        setForm({ name: '', assignedTo: '', due: '', status: 'To Do' });
+
+        fetchData();
+    }, [projectId]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
+    const handleMultiSelect = (e) => {
+        const options = Array.from(e.target.selectedOptions);
+        const values = options.map(opt => parseInt(opt.value));
+        setFormData(prev => ({
+            ...prev,
+            assignedUserIds: values
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post('http://localhost:8080/api/tasks', {
+                ...formData,
+                projectId: parseInt(projectId)
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // Refresh task list
+            const tasksRes = await axios.get(`http://localhost:8080/api/tasks/project/${projectId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setTasks(tasksRes.data);
+
+            // Reset form
+            setFormData({
+                name: '',
+                description: '',
+                milestoneId: '',
+                assignedUserIds: [],
+            });
+        } catch (err) {
+            console.error('Error creating task:', err);
+            alert('Failed to create task');
+        }
+    };
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
+
     return (
-        <div className="feature-page planner-page revamp-main-bg">
-            <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <FaTasks className="feature-icon" style={{ fontSize: 36, color: '#3b82f6', marginRight: 12 }} />
-                    <h2 className="revamp-title">Project Planner</h2>
-                </div>
-                <button
-                    onClick={() => navigate('/')}
-                    style={{
-                        background: '#2563eb',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: 8,
-                        padding: '8px 22px',
-                        fontWeight: 600,
-                        fontSize: 15,
-                        cursor: 'pointer',
-                        boxShadow: '0 1px 4px #dbeafe',
-                        marginLeft: 16,
-                        marginRight: 12,
-                        transition: 'background 0.2s, box-shadow 0.2s',
-                    }}
-                    onMouseOver={e => {
-                        e.currentTarget.style.background = '#1d4ed8';
-                        e.currentTarget.style.boxShadow = '0 2px 8px #93c5fd';
-                    }}
-                    onMouseOut={e => {
-                        e.currentTarget.style.background = '#2563eb';
-                        e.currentTarget.style.boxShadow = '0 1px 4px #dbeafe';
-                    }}
-                >
-                    Back to Home
-                </button>
-            </div>
-            <form className="feature-form revamp-form" onSubmit={handleAdd} style={{
-                marginBottom: 32,
-                background: '#f8fafc',
-                borderRadius: 16,
-                padding: 28,
-                boxShadow: '0 2px 12px #e0e7ef',
-                maxWidth: 700,
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 18 }}>
-                    <FaPlusCircle style={{ fontSize: 22, color: '#3b82f6', marginRight: 8 }} />
-                    <span style={{ fontWeight: 600, fontSize: 18, color: '#334155' }}>Add New Task</span>
-                </div>
-                <div className="revamp-form-row" style={{ gap: 16, width: '100%', flexWrap: 'wrap', justifyContent: 'center' }}>
-                    <input
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        placeholder="Task name"
-                        required
-                        className="revamp-input"
-                        style={{
-                            borderRadius: 10,
-                            border: '1px solid #d1d5db',
-                            padding: '10px 14px',
-                            fontSize: 16,
-                            background: '#fff',
-                            boxShadow: '0 1px 2px #f1f5f9',
-                            outline: 'none',
-                            minWidth: 140,
-                            marginBottom: 8,
-                            transition: 'border 0.2s',
-                        }}
-                        onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
-                        onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
-                    />
-                    <input
-                        name="assignedTo"
-                        value={form.assignedTo}
-                        onChange={handleChange}
-                        placeholder="Assigned to (user name)"
-                        required
-                        className="revamp-input"
-                        style={{
-                            borderRadius: 10,
-                            border: '1px solid #d1d5db',
-                            padding: '10px 14px',
-                            fontSize: 16,
-                            background: '#fff',
-                            boxShadow: '0 1px 2px #f1f5f9',
-                            outline: 'none',
-                            minWidth: 140,
-                            marginBottom: 8,
-                            transition: 'border 0.2s',
-                        }}
-                        onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
-                        onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
-                    />
-                    <input
-                        name="due"
-                        value={form.due}
-                        onChange={handleChange}
-                        type="date"
-                        required
-                        className="revamp-input"
-                        style={{
-                            borderRadius: 10,
-                            border: '1px solid #d1d5db',
-                            padding: '10px 14px',
-                            fontSize: 16,
-                            background: '#fff',
-                            boxShadow: '0 1px 2px #f1f5f9',
-                            outline: 'none',
-                            minWidth: 140,
-                            marginBottom: 8,
-                            transition: 'border 0.2s',
-                        }}
-                        onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
-                        onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
-                    />
-                    <select
-                        name="status"
-                        value={form.status}
-                        onChange={handleChange}
-                        className="revamp-input"
-                        style={{
-                            borderRadius: 10,
-                            border: '1px solid #d1d5db',
-                            padding: '10px 14px',
-                            fontSize: 16,
-                            background: '#fff',
-                            boxShadow: '0 1px 2px #f1f5f9',
-                            outline: 'none',
-                            minWidth: 140,
-                            marginBottom: 8,
-                            transition: 'border 0.2s',
-                        }}
-                        onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
-                        onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
-                    >
-                        <option>To Do</option>
-                        <option>In Progress</option>
-                        <option>Done</option>
-                    </select>
-                    <button type="submit" className="revamp-cta-btn" style={{ minWidth: 120, height: 44, fontSize: 16, borderRadius: 10, marginLeft: 16 }}>
-                        <FaPlusCircle style={{ marginRight: 6 }} /> Add Task
-                    </button>
-                </div>
-                {error && <div style={{ color: 'red', marginTop: 10 }}>{error}</div>}
-            </form>
-            {loading ? (
-                <div style={{ textAlign: 'center', color: '#64748b', fontSize: 18 }}>Loading tasks...</div>
-            ) : (
-                <div className="revamp-features-grid planner-grid">
-                    {tasks.map(t => (
-                        <div className="revamp-feature-card planner-card" key={t.id} style={{ minWidth: 220, maxWidth: 320, margin: '0 auto', borderTop: `4px solid ${statusColors[t.status] || '#d1d5db'}` }}>
-                            <div className="revamp-feature-content">
-                                <h4 className="revamp-feature-title">{t.name}</h4>
-                                <div className="revamp-feature-meta">
-                                    <FaUser className="revamp-feature-icon" /> {t.assignedTo ? t.assignedTo.username || t.assignedTo : ''}
-                                </div>
-                                <div className="revamp-feature-meta">
-                                    <FaCalendarAlt className="revamp-feature-icon" /> Due: {t.due || t.endDate || ''}
-                                </div>
-                                <span className="revamp-feature-status" style={{ background: statusColors[t.status] || '#64748b' }}>{t.status}</span>
-                            </div>
-                        </div>
-                    ))}
+        <div>
+            {project && (
+                <div>
+                    <h2>{project.name}</h2>
+                    <p><strong>Description:</strong> {project.description}</p>
+                    <p><strong>Owner:</strong> {project.ownerUsername}</p>
+                    <p><strong>Start:</strong> {project.startDate}</p>
+                    <p><strong>End:</strong> {project.endDate}</p>
+                    <hr/>
                 </div>
             )}
+
+            <h3>Create New Task</h3>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Task Name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                />
+                <br/>
+                <textarea
+                    name="description"
+                    placeholder="Task Description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                />
+                <br/>
+                <label>
+                    Milestone:
+                    <select name="milestoneId" value={formData.milestoneId} onChange={handleChange} required>
+                        <option value="">-- Select Milestone --</option>
+                        {milestones.map(m => (
+                            <option key={m.id} value={m.id}>{m.name}</option>
+                        ))}
+                    </select>
+                </label>
+                <br/>
+                <label>
+                    Assign Users:
+                    <select multiple value={formData.assignedUserIds.map(String)} onChange={handleMultiSelect}>
+                        {users.map(u => (
+                            <option key={u.id} value={u.id}>{u.username}</option>
+                        ))}
+                    </select>
+                </label>
+                <br/>
+                <button type="submit">Create Task</button>
+            </form>
+
+            <hr/>
+            <h3>Tasks</h3>
+            <ul>
+                {tasks.length > 0 ? (
+                    tasks.map(task => (
+                        <li key={task.id}>
+                            <strong>{task.name}</strong>: {task.description}
+                            <br/>
+                            <em>Status:</em> {task.status}
+                            <br/>
+                            <em>Milestone:</em> {task.milestone?.name || 'None'}
+                        </li>
+                    ))
+                ) : (
+                    <li>No tasks found.</li>
+                )}
+            </ul>
         </div>
     );
-}
+};
+
+export default TaskPlanner;

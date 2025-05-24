@@ -38,6 +38,11 @@ const features = [
 		title: 'Administration',
 		desc: 'Admin facilities to manage users, interactions, and complaints.',
 	},
+	{
+		icon: <FaUserShield className="feature-icon" />,
+		title: 'Milestones',
+		desc: 'Add Milestones.',
+	},
 ];
 
 const featureRoutes = [
@@ -47,6 +52,7 @@ const featureRoutes = [
 	'/calendar',
 	null, // Email Alerts (no direct page)
 	'/admin',
+	'/milestones',
 ];
 
 export default function LandingPage() {

@@ -24,9 +24,6 @@ public class Project {
 
     @Column(name = "owner_username")
     private String ownerUsername;
-
-    private Long ownerId;
-    private Long milestoneId;
     private LocalDate startDate;
     private LocalDate endDate;
 }

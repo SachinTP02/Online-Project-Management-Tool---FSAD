@@ -363,7 +363,8 @@ export default function ProjectPlanner() {
                         <div
                             className="revamp-feature-card planner-card"
                             key={p.id}
-                            style={{ minWidth: 220, maxWidth: 320, margin: '0 auto', borderTop: `4px solid #3b82f6` }}
+                            onClick={() => navigate(`/taskplanner/${p.id}`)}
+                            style={{ minWidth: 220, maxWidth: 320, margin: '0 auto', borderTop: `4px solid #3b82f6`, cursor: 'pointer' }}
                         >
                             <div className="revamp-feature-content">
                                 <h4 className="revamp-feature-title">{p.name}</h4>

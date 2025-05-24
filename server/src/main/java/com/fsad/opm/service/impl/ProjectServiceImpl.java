@@ -45,9 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = Project.builder()
                 .name(requestDTO.getName())
                 .description(requestDTO.getDescription())
-                .ownerUsername(requestDTO.getOwnername()) // store the username directly
-                .ownerId(requestDTO.getOwnerId())
-                .milestoneId(milestoneId)
+                .ownerUsername(requestDTO.getOwnername())
                 .startDate(milestone != null ? milestone.getStartDate() : requestDTO.getStartDate())
                 .endDate(milestone != null ? milestone.getEndDate() : requestDTO.getEndDate())
                 .build();
@@ -65,5 +63,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
+    }
+
+    @Override
+    public Project getProjectById(Long id) {
+        return projectRepository.findById(id).orElse(null);
     }
 }
