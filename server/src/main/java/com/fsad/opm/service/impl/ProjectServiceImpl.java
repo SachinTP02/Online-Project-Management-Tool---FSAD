@@ -48,6 +48,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .ownerUsername(requestDTO.getOwnername())
                 .startDate(milestone != null ? milestone.getStartDate() : requestDTO.getStartDate())
                 .endDate(milestone != null ? milestone.getEndDate() : requestDTO.getEndDate())
+                .targetDate(requestDTO.getTargetDate())
                 .milestone(milestone)
                 .build();
 

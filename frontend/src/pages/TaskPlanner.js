@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FaTasks, FaUser, FaPlusCircle } from 'react-icons/fa';
 import './LandingPage.css';
 
 const TaskPlanner = () => {
     const { projectId } = useParams();
+    const navigate = useNavigate();
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
     const [milestone, setMilestone] = useState(null);
@@ -153,6 +154,23 @@ const TaskPlanner = () => {
                     <h2 className="revamp-title">Task Planner</h2>
                 </div>
             </div>
+            <button
+                onClick={() => navigate(-1)}
+                style={{
+                    background: '#2563eb',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: '8px 22px',
+                    fontWeight: 600,
+                    fontSize: 15,
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 4px #dbeafe',
+                    marginBottom: 16,
+                }}
+            >
+                Back
+            </button>
             {loading ? (
                 <div style={{ textAlign: 'center', color: '#64748b', fontSize: 18 }}>Loading...</div>
             ) : error ? (

@@ -6,7 +6,7 @@ import './LandingPage.css';
 
 export default function ProjectPlanner() {
     const [projects, setProjects] = useState([]);
-    const [form, setForm] = useState({ name: '', description: '', ownername: '', ownerId: '' });
+    const [form, setForm] = useState({ name: '', description: '', ownername: '', ownerId: '', targetDate: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [milestones, setMilestones] = useState([]);
@@ -78,6 +78,7 @@ export default function ProjectPlanner() {
                     milestoneId: selectedMilestone.id,
                     startDate: selectedMilestone.startDate,
                     endDate: selectedMilestone.endDate,
+                    targetDate: form.targetDate,
                 },
                 {
                     headers: {
@@ -86,7 +87,7 @@ export default function ProjectPlanner() {
                 }
             );
             setProjects([...projects, res.data]);
-            setForm({ name: '', description: '', ownername: '', ownerId: '' });
+            setForm({ name: '', description: '', ownername: '', ownerId: '', targetDate: '' });
             setSelectedMilestone(null);
         } catch (err) {
             console.error(err);
@@ -259,6 +260,30 @@ export default function ProjectPlanner() {
                             placeholder="End Date"
                             className="revamp-input"
                             style={{ borderRadius: 10, border: '1px solid #d1d5db', padding: '10px 14px', fontSize: 16, background: '#f1f5f9', minWidth: 140, marginBottom: 8 }}
+                        />
+                        <label style={{ fontWeight: 500, color: '#334155', marginBottom: 4 }}>Target Date</label>
+                        <input
+                            name="targetDate"
+                            type="date"
+                            value={form.targetDate}
+                            onChange={handleChange}
+                            placeholder="Select Target Date"
+                            required
+                            className="revamp-input"
+                            style={{
+                                borderRadius: 10,
+                                border: '1px solid #d1d5db',
+                                padding: '10px 14px',
+                                fontSize: 16,
+                                background: '#fff',
+                                boxShadow: '0 1px 2px #f1f5f9',
+                                outline: 'none',
+                                minWidth: 140,
+                                marginBottom: 8,
+                                transition: 'border 0.2s',
+                            }}
+                            onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
+                            onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
                         />
                         <button
                             type="submit"

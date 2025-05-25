@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 export default function MilestoneModal({ show, onClose, onMilestoneCreated }) {
-  const [form, setForm] = useState({ name: '', startDate: '', endDate: '', targetDate: '' });
+  const [form, setForm] = useState({ name: '', startDate: '', endDate: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,7 @@ export default function MilestoneModal({ show, onClose, onMilestoneCreated }) {
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
-    if (!form.name || !form.startDate || !form.endDate || !form.targetDate) {
+    if (!form.name || !form.startDate || !form.endDate) {
       setError('Please fill all fields');
       return;
     }
@@ -26,12 +26,11 @@ export default function MilestoneModal({ show, onClose, onMilestoneCreated }) {
         name: form.name,
         startDate: form.startDate,
         endDate: form.endDate,
-        targetDate: form.targetDate,
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       onMilestoneCreated(res.data);
-      setForm({ name: '', startDate: '', endDate: '', targetDate: '' });
+      setForm({ name: '', startDate: '', endDate: '' });
       onClose();
     } catch (err) {
       setError('Failed to create milestone');
@@ -51,8 +50,6 @@ export default function MilestoneModal({ show, onClose, onMilestoneCreated }) {
           <input name="startDate" value={form.startDate} onChange={handleChange} type="date" required style={{ padding: 10, borderRadius: 8, border: '1px solid #d1d5db', fontSize: 16 }} />
           <label style={{fontWeight:500, color:'#334155'}}>End Date</label>
           <input name="endDate" value={form.endDate} onChange={handleChange} type="date" required style={{ padding: 10, borderRadius: 8, border: '1px solid #d1d5db', fontSize: 16 }} />
-          <label style={{fontWeight:500, color:'#334155'}}>Target Date</label>
-          <input name="targetDate" value={form.targetDate} onChange={handleChange} type="date" required style={{ padding: 10, borderRadius: 8, border: '1px solid #d1d5db', fontSize: 16 }} placeholder="Target Date" />
           <button type="submit" style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: 16, marginTop: 8 }} disabled={loading}>{loading ? 'Saving...' : 'Save Milestone'}</button>
         </form>
         {error && <div style={{ color: 'red', marginTop: 10 }}>{error}</div>}
