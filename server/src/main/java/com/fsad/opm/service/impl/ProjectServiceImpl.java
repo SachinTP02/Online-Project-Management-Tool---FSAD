@@ -48,6 +48,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .ownerUsername(requestDTO.getOwnername())
                 .startDate(milestone != null ? milestone.getStartDate() : requestDTO.getStartDate())
                 .endDate(milestone != null ? milestone.getEndDate() : requestDTO.getEndDate())
+                .milestone(milestone)
                 .build();
 
         Project savedProject = projectRepository.save(project);
@@ -57,6 +58,9 @@ public class ProjectServiceImpl implements ProjectService {
                 .name(savedProject.getName())
                 .description(savedProject.getDescription())
                 .ownerUsername(savedProject.getOwnerUsername())
+                .milestoneId(savedProject.getMilestone() != null ? savedProject.getMilestone().getId() : null)
+                .startDate(savedProject.getStartDate())
+                .endDate(savedProject.getEndDate())
                 .build();
     }
 

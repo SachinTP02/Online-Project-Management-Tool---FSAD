@@ -26,4 +26,8 @@ public class Project {
     private String ownerUsername;
     private LocalDate startDate;
     private LocalDate endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "milestone_id")
+    private Milestone milestone;
 }
