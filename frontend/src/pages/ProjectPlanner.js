@@ -3,17 +3,14 @@ import { FaTasks, FaUser, FaPlusCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
-import MilestoneModal from './MilestoneModal';
 
 export default function ProjectPlanner() {
     const [projects, setProjects] = useState([]);
-    const [form, setForm] = useState({ name: '', description: '', ownername: '', ownerId: '' });
-    const [users, setUsers] = useState([]);
+    const [form, setForm] = useState({ name: '', description: '', ownername: '', ownerId: '', targetDate: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [milestones, setMilestones] = useState([]);
     const [selectedMilestone, setSelectedMilestone] = useState(null);
-    const [showMilestoneModal, setShowMilestoneModal] = useState(false);
     const navigate = useNavigate();
     const userRole = localStorage.getItem('role');
     const isManagerOrAdmin = userRole === 'manager' || userRole === 'admin';
@@ -41,20 +38,6 @@ export default function ProjectPlanner() {
     }, []);
 
     useEffect(() => {
-        // Fetch accepted users for owner dropdown
-        const fetchUsers = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:8080/api/users', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setUsers(res.data);
-            } catch (err) {
-                setUsers([]);
-            }
-        };
-        fetchUsers();
-
         // Fetch milestones for manager
         const fetchMilestones = async () => {
             try {
@@ -72,29 +55,14 @@ export default function ProjectPlanner() {
 
     const handleChange = e => {
         const { name, value } = e.target;
-        if (name === 'ownername') {
-            // Find user by username and set ownerId
-            const selectedUser = users.find(u => u.username === value);
-            setForm({ ...form, ownername: value, ownerId: selectedUser ? selectedUser.id : '' });
-        } else {
-            setForm({ ...form, [name]: value });
-        }
-    };
-
-    const handleOwnerSelect = e => {
-        const userId = e.target.value;
-        const selectedUser = users.find(u => String(u.id) === String(userId));
-        setForm({
-            ...form,
-            ownerId: userId,
-            ownername: selectedUser ? selectedUser.username : '',
-        });
+        setForm({ ...form, [name]: value });
     };
 
     const handleAdd = async e => {
         e.preventDefault();
         setError('');
-        if (!form.name || !form.description || !form.ownername || !form.ownerId || !selectedMilestone) {
+        const username = localStorage.getItem('username');
+        if (!form.name || !form.description || !selectedMilestone) {
             setError('Please fill all fields and select a milestone');
             return;
         }
@@ -106,11 +74,11 @@ export default function ProjectPlanner() {
                 {
                     name: form.name,
                     description: form.description,
-                    ownername: form.ownername,
-                    ownerId: form.ownerId,
+                    ownername: username,
                     milestoneId: selectedMilestone.id,
                     startDate: selectedMilestone.startDate,
                     endDate: selectedMilestone.endDate,
+                    targetDate: form.targetDate,
                 },
                 {
                     headers: {
@@ -119,7 +87,7 @@ export default function ProjectPlanner() {
                 }
             );
             setProjects([...projects, res.data]);
-            setForm({ name: '', description: '', ownername: '', ownerId: '' });
+            setForm({ name: '', description: '', ownername: '', ownerId: '', targetDate: '' });
             setSelectedMilestone(null);
         } catch (err) {
             console.error(err);
@@ -127,11 +95,6 @@ export default function ProjectPlanner() {
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleMilestoneCreated = (milestone) => {
-        setMilestones([...milestones, milestone]);
-        setSelectedMilestone(milestone);
     };
 
     return (
@@ -178,17 +141,6 @@ export default function ProjectPlanner() {
 
             {isManagerOrAdmin && (
                 <>
-                <button
-                    onClick={() => setShowMilestoneModal(true)}
-                    style={{ marginBottom: 18, background: '#2563eb', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 22px', fontWeight: 600, fontSize: 15, cursor: 'pointer', boxShadow: '0 1px 4px #dbeafe' }}
-                >
-                    + Add Milestone
-                </button>
-                <MilestoneModal
-                    show={showMilestoneModal}
-                    onClose={() => setShowMilestoneModal(false)}
-                    onMilestoneCreated={handleMilestoneCreated}
-                />
                 <form
                     className="feature-form revamp-form"
                     onSubmit={handleAdd}
@@ -263,32 +215,6 @@ export default function ProjectPlanner() {
                             onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                             onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
                         />
-                        <select
-                            name="ownerId"
-                            value={form.ownerId}
-                            onChange={handleOwnerSelect}
-                            required
-                            className="revamp-input"
-                            style={{
-                                borderRadius: 10,
-                                border: '1px solid #d1d5db',
-                                padding: '10px 14px',
-                                fontSize: 16,
-                                background: '#fff',
-                                boxShadow: '0 1px 2px #f1f5f9',
-                                outline: 'none',
-                                minWidth: 180,
-                                marginBottom: 8,
-                                transition: 'border 0.2s',
-                            }}
-                            onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
-                            onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
-                        >
-                            <option value="">Select Owner</option>
-                            {users.map(u => (
-                                <option key={u.id} value={u.id}>{u.username} ({u.email})</option>
-                            ))}
-                        </select>
                         {/* Milestone selection - required */}
                         <select
                             name="milestoneId"
@@ -335,8 +261,30 @@ export default function ProjectPlanner() {
                             className="revamp-input"
                             style={{ borderRadius: 10, border: '1px solid #d1d5db', padding: '10px 14px', fontSize: 16, background: '#f1f5f9', minWidth: 140, marginBottom: 8 }}
                         />
-                        {/* Hidden input for ownername, auto-filled from dropdown */}
-                        <input type="hidden" name="ownername" value={form.ownername} />
+                        <label style={{ fontWeight: 500, color: '#334155', marginBottom: 4 }}>Target Date</label>
+                        <input
+                            name="targetDate"
+                            type="date"
+                            value={form.targetDate}
+                            onChange={handleChange}
+                            placeholder="Select Target Date"
+                            required
+                            className="revamp-input"
+                            style={{
+                                borderRadius: 10,
+                                border: '1px solid #d1d5db',
+                                padding: '10px 14px',
+                                fontSize: 16,
+                                background: '#fff',
+                                boxShadow: '0 1px 2px #f1f5f9',
+                                outline: 'none',
+                                minWidth: 140,
+                                marginBottom: 8,
+                                transition: 'border 0.2s',
+                            }}
+                            onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
+                            onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
+                        />
                         <button
                             type="submit"
                             className="revamp-cta-btn"

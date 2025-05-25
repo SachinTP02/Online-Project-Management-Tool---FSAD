@@ -14,4 +14,5 @@ public class CreateProjectRequest {
     private Long milestoneId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDate targetDate;
 }

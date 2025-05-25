@@ -1,4 +1,4 @@
-  import React, { useState } from 'react';
+import React, { useState } from 'react';
   import { BrowserRouter as Router, Routes, Route, useNavigate, Link } from 'react-router-dom';
   import './App.css';
   import LandingPage from './pages/LandingPage';
@@ -108,6 +108,7 @@
           <Route path="/storage" element={<Storage />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/milestones" element={<Milestones />} />
           <Route path="/milestone" element={<Milestones />} />
           <Route path="/taskplanner/:projectId" element={<TaskPlanner />} />
         </Routes>
