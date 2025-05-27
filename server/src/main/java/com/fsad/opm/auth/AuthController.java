@@ -4,6 +4,7 @@ import com.fsad.opm.dto.AuthRequest;
 import com.fsad.opm.dto.AuthResponse;
 import com.fsad.opm.dto.RegisterRequest;
 import com.fsad.opm.dto.UserStatusUpdateRequest;
+import com.fsad.opm.service.impl.MailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final MailServiceImpl mailService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+        mailService.sendEmail(request.getEmail(),"welcome","hello world");
         return ResponseEntity.ok(authService.register(request));
     }
 
