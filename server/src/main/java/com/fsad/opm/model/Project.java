@@ -32,13 +32,6 @@ public class Project {
     @JoinColumn(name = "milestone_id")
     private Milestone milestone;
 
-    @Lob
-    @Column(name = "attachment", columnDefinition = "LONGBLOB")
-    private byte[] attachment;
-
-    @Column(name = "attachment_name")
-    private String attachmentName;
-
-    @Column(name = "attachment_type")
-    private String attachmentType;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectAttachment> attachments;
 }

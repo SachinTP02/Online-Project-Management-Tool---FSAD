@@ -24,9 +24,9 @@ public class ProjectController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProjectResponse> createProject(
             @RequestPart("data") CreateProjectRequest requestDTO,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
-        ProjectResponse response = projectService.createProject(requestDTO, file);
+        ProjectResponse response = projectService.createProject(requestDTO, files);
         return ResponseEntity.ok(response);
     }
 

@@ -6,7 +6,15 @@ import './LandingPage.css';
 
 export default function ProjectPlanner() {
     const [projects, setProjects] = useState([]);
-    const [form, setForm] = useState({ name: '', description: '', ownername: '', ownerId: '', targetDate: '' });
+    const [form, setForm] = useState({
+        name: '',
+        description: '',
+        ownername: '',
+        ownerId: '',
+        targetDate: '',
+        files: [], // updated from file: null
+    });
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [milestones, setMilestones] = useState([]);
@@ -72,7 +80,6 @@ export default function ProjectPlanner() {
             setLoading(true);
             const token = localStorage.getItem('token');
 
-            // Prepare FormData
             const formData = new FormData();
             const projectPayload = {
                 name: form.name,
@@ -83,11 +90,18 @@ export default function ProjectPlanner() {
                 endDate: selectedMilestone.endDate,
                 targetDate: form.targetDate,
             };
-            formData.append('data', new Blob([JSON.stringify(projectPayload)], { type: 'application/json' }));
 
-            if (form.file) {
-                formData.append('file', form.file);
-            }
+            formData.append(
+                'data',
+                new Blob([JSON.stringify(projectPayload)], {
+                    type: 'application/json',
+                })
+            );
+
+            // Append all selected files
+            form.files.forEach(file => {
+                formData.append('files', file); // 'files' should match controller param name
+            });
 
             const res = await axios.post('http://localhost:8080/api/projects', formData, {
                 headers: {
@@ -97,7 +111,7 @@ export default function ProjectPlanner() {
             });
 
             setProjects([...projects, res.data]);
-            setForm({ name: '', description: '', ownername: '', ownerId: '', targetDate: '', file: null });
+            setForm({ name: '', description: '', ownername: '', ownerId: '', targetDate: '', files: [] });
             setSelectedMilestone(null);
         } catch (err) {
             console.error(err);
@@ -106,6 +120,7 @@ export default function ProjectPlanner() {
             setLoading(false);
         }
     };
+
 
 
     return (
@@ -314,8 +329,9 @@ export default function ProjectPlanner() {
                         />
                         <input
                             type="file"
-                            name="file"
-                            onChange={e => setForm({...form, file: e.target.files[0]})}
+                            name="files"
+                            multiple
+                            onChange={e => setForm({...form, files: Array.from(e.target.files)})}
                             accept="*"
                             className="revamp-input"
                             style={{
@@ -331,6 +347,7 @@ export default function ProjectPlanner() {
                                 transition: 'border 0.2s',
                             }}
                         />
+
 
                         <button
                             type="submit"
