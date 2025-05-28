@@ -62,32 +62,42 @@ export default function ProjectPlanner() {
         e.preventDefault();
         setError('');
         const username = localStorage.getItem('username');
+
         if (!form.name || !form.description || !selectedMilestone) {
             setError('Please fill all fields and select a milestone');
             return;
         }
+
         try {
             setLoading(true);
             const token = localStorage.getItem('token');
-            const res = await axios.post(
-                'http://localhost:8080/api/projects',
-                {
-                    name: form.name,
-                    description: form.description,
-                    ownername: username,
-                    milestoneId: selectedMilestone.id,
-                    startDate: selectedMilestone.startDate,
-                    endDate: selectedMilestone.endDate,
-                    targetDate: form.targetDate,
+
+            // Prepare FormData
+            const formData = new FormData();
+            const projectPayload = {
+                name: form.name,
+                description: form.description,
+                ownername: username,
+                milestoneId: selectedMilestone.id,
+                startDate: selectedMilestone.startDate,
+                endDate: selectedMilestone.endDate,
+                targetDate: form.targetDate,
+            };
+            formData.append('data', new Blob([JSON.stringify(projectPayload)], { type: 'application/json' }));
+
+            if (form.file) {
+                formData.append('file', form.file);
+            }
+
+            const res = await axios.post('http://localhost:8080/api/projects', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            });
+
             setProjects([...projects, res.data]);
-            setForm({ name: '', description: '', ownername: '', ownerId: '', targetDate: '' });
+            setForm({ name: '', description: '', ownername: '', ownerId: '', targetDate: '', file: null });
             setSelectedMilestone(null);
         } catch (err) {
             console.error(err);
@@ -96,6 +106,7 @@ export default function ProjectPlanner() {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="feature-page planner-page revamp-main-bg">
@@ -169,7 +180,7 @@ export default function ProjectPlanner() {
                     )}
                     <div
                         className="revamp-form-row"
-                        style={{ gap: 16, width: '100%', flexWrap: 'wrap', justifyContent: 'center' }}
+                        style={{gap: 16, width: '100%', flexWrap: 'wrap', justifyContent: 'center'}}
                     >
                         <input
                             name="name"
@@ -251,7 +262,15 @@ export default function ProjectPlanner() {
                             readOnly
                             placeholder="Start Date"
                             className="revamp-input"
-                            style={{ borderRadius: 10, border: '1px solid #d1d5db', padding: '10px 14px', fontSize: 16, background: '#f1f5f9', minWidth: 140, marginBottom: 8 }}
+                            style={{
+                                borderRadius: 10,
+                                border: '1px solid #d1d5db',
+                                padding: '10px 14px',
+                                fontSize: 16,
+                                background: '#f1f5f9',
+                                minWidth: 140,
+                                marginBottom: 8
+                            }}
                         />
                         <input
                             name="endDate"
@@ -259,9 +278,17 @@ export default function ProjectPlanner() {
                             readOnly
                             placeholder="End Date"
                             className="revamp-input"
-                            style={{ borderRadius: 10, border: '1px solid #d1d5db', padding: '10px 14px', fontSize: 16, background: '#f1f5f9', minWidth: 140, marginBottom: 8 }}
+                            style={{
+                                borderRadius: 10,
+                                border: '1px solid #d1d5db',
+                                padding: '10px 14px',
+                                fontSize: 16,
+                                background: '#f1f5f9',
+                                minWidth: 140,
+                                marginBottom: 8
+                            }}
                         />
-                        <label style={{ fontWeight: 500, color: '#334155', marginBottom: 4 }}>Target Date</label>
+                        <label style={{fontWeight: 500, color: '#334155', marginBottom: 4}}>Target Date</label>
                         <input
                             name="targetDate"
                             type="date"
@@ -285,15 +312,35 @@ export default function ProjectPlanner() {
                             onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                             onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
                         />
+                        <input
+                            type="file"
+                            name="file"
+                            onChange={e => setForm({...form, file: e.target.files[0]})}
+                            accept="*"
+                            className="revamp-input"
+                            style={{
+                                borderRadius: 10,
+                                border: '1px solid #d1d5db',
+                                padding: '10px 14px',
+                                fontSize: 16,
+                                background: '#fff',
+                                boxShadow: '0 1px 2px #f1f5f9',
+                                outline: 'none',
+                                minWidth: 140,
+                                marginBottom: 8,
+                                transition: 'border 0.2s',
+                            }}
+                        />
+
                         <button
                             type="submit"
                             className="revamp-cta-btn"
-                            style={{ minWidth: 120, height: 44, fontSize: 16, borderRadius: 10, marginLeft: 16 }}
+                            style={{minWidth: 120, height: 44, fontSize: 16, borderRadius: 10, marginLeft: 16}}
                         >
-                            <FaPlusCircle style={{ marginRight: 6 }} /> Add Project
+                            <FaPlusCircle style={{marginRight: 6}}/> Add Project
                         </button>
                     </div>
-                    {error && <div style={{ color: 'red', marginTop: 10 }}>{error}</div>}
+                    {error && <div style={{color: 'red', marginTop: 10}}>{error}</div>}
                 </form>
                 </>
             )}
@@ -304,7 +351,7 @@ export default function ProjectPlanner() {
             )}
 
             {loading ? (
-                <div style={{ textAlign: 'center', color: '#64748b', fontSize: 18 }}>Loading projects...</div>
+                <div style={{textAlign: 'center', color: '#64748b', fontSize: 18 }}>Loading projects...</div>
             ) : (
                 <div className="revamp-features-grid planner-grid">
                     {projects.map(p => (
