@@ -11,18 +11,20 @@
  import com.fsad.opm.service.TaskService;
  import com. fsad. opm. model. Task;
  import com. fsad. opm. model. Milestone;
-
+ import com.fsad.opm.service.ReportPdfService;
  import lombok.RequiredArgsConstructor;
-
  import org.springframework.http.ResponseEntity;
  import org.springframework.security.core.userdetails.UsernameNotFoundException;
  import org.springframework.stereotype.Service;
-
  import com.fsad.opm.dto.ReportResponse;
-
+ //import org.springframework.mail.javamail.JavaMailSender;
+ import jakarta.mail.MessagingException;
+ import jakarta.mail.internet.MimeMessage;
+ import org.springframework.mail.javamail.MimeMessageHelper;
+ import org.springframework.core.io.ByteArrayResource;
  import java.time.LocalDate;
  import java.util.ArrayList;
-import java.util.HashMap;
+ import java.util.HashMap;
  import java.util.List;
 
  @Service
@@ -34,6 +36,8 @@ public class ProjectReportService {
      private final UserRepository userRepo;
      private final ProjectService projectService;
      private final TaskService taskService;
+     private final ReportPdfService reportPdfService;
+    // private final JavaMailSender mailSender;
 
 // i want to provide report based on user choice-weekly or monthly
 // it should include
@@ -120,6 +124,27 @@ public class ProjectReportService {
 
     return statusMap;
 }
+
+    public byte[] generateReportPdf(Long projectId, String period) {
+        ReportResponse report = getReportForProject(projectId, period);
+        return reportPdfService.generatePdfFromReport(report);
+    }
+
+    // public void emailReportPdf(Long projectId, String period, String email) {
+    //     byte[] pdf = generateReportPdf(projectId, period);
+
+    //     try {
+    //         MimeMessage message = mailSender.createMimeMessage();
+    //         MimeMessageHelper helper = new MimeMessageHelper(message, true);
+    //         helper.setTo(email);
+    //         helper.setSubject("Project Report");
+    //         helper.setText("Please find the attached project report.");
+    //         helper.addAttachment("report.pdf", new ByteArrayResource(pdf));
+    //         mailSender.send(message);
+    //     } catch (MessagingException e) {
+    //         throw new RuntimeException("Failed to send email", e);
+    //     }
+    // }
 
  }
 
