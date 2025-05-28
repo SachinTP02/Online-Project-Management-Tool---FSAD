@@ -153,9 +153,11 @@ export default function LandingPage() {
 							<button className="revamp-cta-btn" onClick={() => setShowRegister(true)}>
 								Get Started
 							</button>
-							<button className="revamp-cta-link" onClick={() => setShowLogin(true)}>
-								Already have an account?
-							</button>
+							{!user && (
+		                      <button className="revamp-cta-link" onClick={() => setShowLogin(true)}>
+			                    Already have an account?
+		                      </button>
+	                        )}
 						</div>
 					</div>
 					<div className="revamp-hero-visual">
@@ -219,6 +221,7 @@ export default function LandingPage() {
 								setShowLogin(false);
 								setUser({ username });
 								localStorage.setItem('username', username);
+								navigate('/dashboard');
 							}}
 							customUI
 						/>
