@@ -6,8 +6,10 @@ import com.fsad.opm.model.Project;
 import com.fsad.opm.model.Task;
 import com.fsad.opm.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,11 +21,15 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PostMapping
-    public ResponseEntity<ProjectResponse> createProject(@RequestBody CreateProjectRequest requestDTO) {
-        ProjectResponse response = projectService.createProject(requestDTO);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProjectResponse> createProject(
+            @RequestPart("data") CreateProjectRequest requestDTO,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        ProjectResponse response = projectService.createProject(requestDTO, file);
         return ResponseEntity.ok(response);
     }
+
 
     @GetMapping
     public List<Project> getAllProjects() {
