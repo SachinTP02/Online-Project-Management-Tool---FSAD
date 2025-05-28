@@ -251,29 +251,32 @@ const TaskPlanner = () => {
                                 onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                                 onBlur={e => (e.target.style.border = '1px solid #d1d5db')}
                             />
-                            <select
-                                name="assignedUserIds"
-                                value={formData.assignedUserIds.length > 0 ? formData.assignedUserIds[0] : ''}
-                                onChange={e => setFormData(prev => ({ ...prev, assignedUserIds: [parseInt(e.target.value)] }))}
-                                className="revamp-input"
-                                style={{
-                                    borderRadius: 10,
-                                    border: '1px solid #d1d5db',
-                                    padding: '10px 14px',
-                                    fontSize: 16,
-                                    background: '#fff',
-                                    boxShadow: '0 1px 2px #f1f5f9',
-                                    outline: 'none',
-                                    minWidth: 180,
-                                    marginBottom: 8,
-                                    transition: 'border 0.2s',
-                                }}
-                            >
-                                <option value="">Select Developer</option>
+                            {/* Developer checklist for multi-select */}
+                            <div style={{
+                                display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 180, marginBottom: 8, maxHeight: 110, overflowY: 'auto', border: '1px solid #d1d5db', borderRadius: 10, padding: 8, background: '#fff', boxShadow: '0 1px 2px #f1f5f9'
+                            }}>
+                                <label style={{ fontWeight: 500, color: '#334155', marginBottom: 4 }}>Assign Developers</label>
                                 {users.filter(u => u.role === 'DEVELOPER').map(u => (
-                                    <option key={u.id} value={u.id}>{u.username}</option>
+                                    <label key={u.id} style={{ display: 'flex', alignItems: 'center', marginBottom: 4, fontSize: 15, color: '#334155', cursor: 'pointer' }}>
+                                        <input
+                                            type="checkbox"
+                                            value={u.id}
+                                            checked={formData.assignedUserIds.includes(u.id)}
+                                            onChange={e => {
+                                                const id = parseInt(e.target.value);
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    assignedUserIds: e.target.checked
+                                                        ? [...prev.assignedUserIds, id]
+                                                        : prev.assignedUserIds.filter(uid => uid !== id)
+                                                }));
+                                            }}
+                                            style={{ marginRight: 8 }}
+                                        />
+                                        {u.username}
+                                    </label>
                                 ))}
-                            </select>
+                            </div>
                         </div>
                         <button type="submit" className="revamp-cta-btn" style={{ minWidth: 120, height: 44, fontSize: 16, borderRadius: 10, marginTop: 8 }}>Create Task</button>
                     </form>

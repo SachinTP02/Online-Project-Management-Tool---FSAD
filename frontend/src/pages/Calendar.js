@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
+import axios from 'axios';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
@@ -19,38 +20,83 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+const publicHolidays = [
+  { title: 'Republic Day', date: '2025-01-26' },
+  { title: 'Independence Day', date: '2025-08-15' },
+  { title: 'Gandhi Jayanti', date: '2025-10-02' },
+  { title: 'Diwali', date: '2025-11-11' },
+  { title: 'Christmas', date: '2025-12-25' },
+];
+
 export default function Calendar() {
   const navigate = useNavigate();
-  const [events, setEvents] = useState(() => {
-    // Load events from localStorage if available
-    const saved = localStorage.getItem('projectEvents');
-    return saved ? JSON.parse(saved).map(e => ({
-      ...e,
-      start: new Date(e.start),
-      end: new Date(e.end),
-    })) : [];
-  });
-  const [form, setForm] = useState({ title: '', date: '', type: 'Meeting' });
-  const [adding, setAdding] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Persist events to localStorage
   useEffect(() => {
-    localStorage.setItem('projectEvents', JSON.stringify(events));
-  }, [events]);
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        const username = localStorage.getItem('username');
 
-  const eventPropGetter = useMemo(() => (event) => {
-    if (event.type === 'Deadline') {
-      return {
-        style: {
-          backgroundColor: '#ef4444',
-          color: '#fff',
-          borderRadius: '8px',
-          border: 'none',
-          fontWeight: 700,
-        },
-      };
-    }
-    if (event.type === 'Milestone') {
+        // Fetch projects and tasks based on user role
+        const [projectsRes, tasksRes] = await Promise.all([
+          axios.get('http://localhost:8080/api/projects', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get('http://localhost:8080/api/tasks', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const projects = projectsRes.data.filter(project =>
+          role === 'manager' || project.ownerUsername === username
+        );
+
+        const tasks = tasksRes.data.filter(task =>
+          role === 'manager' || task.assignedUsers.some(user => user.username === username)
+        );
+
+        // Map projects and tasks to calendar events
+        const projectEvents = projects.map(project => ({
+          title: `Project: ${project.name}`,
+          start: new Date(project.startDate),
+          end: new Date(project.endDate),
+          type: 'Project',
+        }));
+
+        const taskEvents = tasks.map(task => ({
+          title: `Task: ${task.name}`,
+          start: new Date(task.milestone.startDate),
+          end: new Date(task.milestone.endDate),
+          type: 'Task',
+        }));
+
+        // Map public holidays to calendar events
+        const holidayEvents = publicHolidays.map(holiday => ({
+          title: `Holiday: ${holiday.title}`,
+          start: new Date(holiday.date),
+          end: new Date(holiday.date),
+          type: 'Holiday',
+        }));
+
+        setEvents([...projectEvents, ...taskEvents, ...holidayEvents]);
+      } catch (err) {
+        setError('Failed to fetch events');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const eventPropGetter = useMemo(() => event => {
+    if (event.type === 'Project') {
       return {
         style: {
           backgroundColor: '#3b82f6',
@@ -61,7 +107,7 @@ export default function Calendar() {
         },
       };
     }
-    if (event.type === 'Meeting') {
+    if (event.type === 'Task') {
       return {
         style: {
           backgroundColor: '#22c55e',
@@ -72,7 +118,17 @@ export default function Calendar() {
         },
       };
     }
-    // Default style
+    if (event.type === 'Holiday') {
+      return {
+        style: {
+          backgroundColor: '#ef4444',
+          color: '#fff',
+          borderRadius: '8px',
+          border: 'none',
+          fontWeight: 700,
+        },
+      };
+    }
     return {
       style: {
         backgroundColor: '#e0e7ef',
@@ -83,26 +139,8 @@ export default function Calendar() {
     };
   }, []);
 
-  function handleFormChange(e) {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-  }
-
-  function handleAddEvent(e) {
-    e.preventDefault();
-    if (!form.title || !form.date) return;
-    setEvents(prev => [
-      ...prev,
-      {
-        title: form.title,
-        start: new Date(form.date),
-        end: new Date(form.date),
-        allDay: true,
-        type: form.type,
-      },
-    ]);
-    setForm({ title: '', date: '', type: 'Meeting' });
-    setAdding(false);
-  }
+  if (loading) return <div>Loading events...</div>;
+  if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
   return (
     <div className="feature-page" style={{ background: '#f3f6fa', minHeight: '100vh', paddingBottom: 32 }}>
@@ -111,73 +149,21 @@ export default function Calendar() {
         <button
           onClick={() => navigate('/')}
           className="revamp-cta-btn"
-          style={{
-            marginLeft: 16,
-            marginRight: 32,
-          }}
+          style={{ marginLeft: 16, marginRight: 32 }}
         >
           Back to Home
         </button>
       </div>
-      {/* Modern color-coded legend for project events only */}
-      <div className="revamp-feature-legend" style={{ marginLeft: 40, marginTop: 18, marginBottom: 8 }}>
-        <span className="revamp-feature-legend-item"><span className="revamp-feature-legend-color" style={{ background: '#22c55e', border: '2px solid #16a34a' }}></span> Meeting</span>
-        <span className="revamp-feature-legend-item"><span className="revamp-feature-legend-color" style={{ background: '#ef4444', border: '2px solid #b91c1c' }}></span> Deadline</span>
-        <span className="revamp-feature-legend-item"><span className="revamp-feature-legend-color" style={{ background: '#3b82f6', border: '2px solid #1d4ed8' }}></span> Milestone</span>
-      </div>
-      <div className="revamp-feature-actions" style={{ marginLeft: 40 }}>
-        <button
-          onClick={() => setAdding(a => !a)}
-          className={`revamp-cta-btn ${adding ? 'revamp-cta-btn-cancel' : ''}`}
-        >
-          {adding ? 'Cancel' : 'Add Project Event'}
-        </button>
-        {adding && (
-          <form onSubmit={handleAddEvent} className="revamp-feature-form">
-            <input
-              name="title"
-              value={form.title}
-              onChange={handleFormChange}
-              placeholder="Event Title"
-              required
-              className="revamp-feature-input"
-            />
-            <input
-              name="date"
-              value={form.date}
-              onChange={handleFormChange}
-              type="date"
-              required
-              className="revamp-feature-input"
-            />
-            <select
-              name="type"
-              value={form.type}
-              onChange={handleFormChange}
-              className="revamp-feature-select"
-            >
-              <option value="Meeting">Meeting</option>
-              <option value="Deadline">Deadline</option>
-              <option value="Milestone">Milestone</option>
-            </select>
-            <button type="submit" className="revamp-cta-btn">
-              Add
-            </button>
-          </form>
-        )}
-      </div>
-      <div className="revamp-feature-calendar">
-        <BigCalendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 560 }}
-          eventPropGetter={eventPropGetter}
-          views={['month', 'agenda']}
-          popup
-        />
-      </div>
+      <BigCalendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: 560 }}
+        eventPropGetter={eventPropGetter}
+        views={['month', 'agenda']}
+        popup
+      />
     </div>
   );
 }
