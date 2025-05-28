@@ -34,6 +34,11 @@ public class TaskController {
         return taskService.getTasksByMilestoneId(milestoneId);
     }
 
+    @GetMapping
+    public List<Task> getAllTasks() {
+        return taskService.getAllTasks();
+    }
+
     @PutMapping("/{taskId}/assign-users")
     public ResponseEntity<Task> assignUsers(
             @PathVariable Long taskId,
