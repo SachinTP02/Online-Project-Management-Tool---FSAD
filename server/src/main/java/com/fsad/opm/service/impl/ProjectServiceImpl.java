@@ -2,10 +2,7 @@ package com.fsad.opm.service.impl;
 
 import com.fsad.opm.dto.CreateProjectRequest;
 import com.fsad.opm.dto.ProjectResponse;
-import com.fsad.opm.model.Milestone;
-import com.fsad.opm.model.Project;
-import com.fsad.opm.model.Task;
-import com.fsad.opm.model.User;
+import com.fsad.opm.model.*;
 import com.fsad.opm.repository.MilestoneRepository;
 import com.fsad.opm.repository.ProjectRepository;
 import com.fsad.opm.repository.UserRepository;
@@ -28,9 +25,9 @@ public class ProjectServiceImpl implements ProjectService {
     private final MilestoneRepository milestoneRepository;
 
     @Override
-    public ProjectResponse createProject(CreateProjectRequest requestDTO, MultipartFile file) {
+    public ProjectResponse createProject(CreateProjectRequest requestDTO, List<MultipartFile> files) {
 
-        // validate user
+        // Validate user
         userRepository.findByUsername(requestDTO.getOwnername())
                 .ifPresent(user -> {
                     if (user.getStatus() != ACCEPTED) {
@@ -40,14 +37,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         Long milestoneId = requestDTO.getMilestoneId();
         Milestone milestone = milestoneId != null ? milestoneRepository.findById(milestoneId).orElse(null) : null;
-        byte[] fileBytes = null;
-        try {
-            if (file != null) {
-                fileBytes = file.getBytes();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read file bytes", e);
-        }
 
         Project project = Project.builder()
                 .name(requestDTO.getName())
@@ -57,10 +46,25 @@ public class ProjectServiceImpl implements ProjectService {
                 .endDate(milestone != null ? milestone.getEndDate() : requestDTO.getEndDate())
                 .targetDate(requestDTO.getTargetDate())
                 .milestone(milestone)
-                .attachment(fileBytes)
-                .attachmentName(file != null ? file.getOriginalFilename() : null)
-                .attachmentType(file != null ? file.getContentType() : null)
                 .build();
+
+        if (files != null && !files.isEmpty()) {
+            List<ProjectAttachment> attachments = files.stream()
+                    .map(file -> {
+                        try {
+                            return ProjectAttachment.builder()
+                                    .attachment(file.getBytes())
+                                    .attachmentName(file.getOriginalFilename())
+                                    .attachmentType(file.getContentType())
+                                    .project(project)
+                                    .build();
+                        } catch (IOException e) {
+                            throw new RuntimeException("Failed to process file", e);
+                        }
+                    })
+                    .toList();
+            project.setAttachments(attachments);
+        }
 
         Project savedProject = projectRepository.save(project);
 
@@ -73,13 +77,6 @@ public class ProjectServiceImpl implements ProjectService {
                 .startDate(savedProject.getStartDate())
                 .endDate(savedProject.getEndDate())
                 .build();
-    }
-
-    public byte[] downloadAttachment(Long projectId) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
-
-        return project.getAttachment();
     }
 
     @Override
