@@ -84,7 +84,7 @@ export default function LandingPage() {
 			const step = Math.max(1, Math.ceil(end / (duration / 16)));
 			let current = 0;
 			const animate = () => {
-        if (!ref.current) return;
+        		if (!ref.current) return;
 				current += step;
 				if (current > end) current = end;
 				ref.current.textContent = current;
@@ -97,6 +97,30 @@ export default function LandingPage() {
 		});
 		// eslint-disable-next-line
 	}, []);
+
+	// Handle feature card clicks - only allow if user is logged in
+	const handleFeatureClick = (route) => {
+		if (!user) {
+			// User not logged in - show login modal instead
+			setShowLogin(true);
+			return;
+		}
+		// User is logged in - navigate to the route
+		if (route) {
+			navigate(route);
+		}
+	};
+
+	// Handle "Get Started" button click
+	const handleGetStartedClick = () => {
+		if (user) {
+			// User is logged in - navigate to dashboard
+			navigate('/dashboard');
+		} else {
+			// User not logged in - show register modal
+			setShowRegister(true);
+		}
+	};
 
 	return (
 		<div className="landing-root landing-revamp">
@@ -150,8 +174,8 @@ export default function LandingPage() {
 							their entire portfolio of projects.
 						</p>
 						<div className="revamp-cta-row">
-							<button className="revamp-cta-btn" onClick={() => setShowRegister(true)}>
-								Get Started
+							<button className="revamp-cta-btn" onClick={handleGetStartedClick}>
+								{user ? 'Go to Dashboard' : 'Get Started'}
 							</button>
 							<button className="revamp-cta-link" onClick={() => setShowLogin(true)}>
 								Already have an account?
@@ -193,13 +217,37 @@ export default function LandingPage() {
 					<div className="revamp-features-grid">
 						{features.map((f, i) => (
 							<div
-								className={`revamp-feature-card${featureRoutes[i] ? ' clickable' : ''}`}
+								className={`revamp-feature-card${featureRoutes[i] ? ' clickable' : ''} ${!user ? ' disabled' : ''}`}
 								key={i}
-								onClick={() => {
-									if (featureRoutes[i]) navigate(featureRoutes[i]);
+								onClick={() => handleFeatureClick(featureRoutes[i])}
+								style={{
+									cursor: !user ? 'not-allowed' : (featureRoutes[i] ? 'pointer' : 'default'),
+									opacity: !user ? 0.6 : 1,
+									position: 'relative'
 								}}
-								style={featureRoutes[i] ? { cursor: 'pointer' } : {}}
 							>
+								{!user && (
+									<div
+										style={{
+											position: 'absolute',
+											top: 0,
+											left: 0,
+											right: 0,
+											bottom: 0,
+											background: 'rgba(0, 0, 0, 0.1)',
+											borderRadius: 'inherit',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+											fontSize: '12px',
+											fontWeight: 'bold',
+											color: '#666',
+											zIndex: 1
+										}}
+									>
+										Login Required
+									</div>
+								)}
 								<div className="revamp-feature-icon">{f.icon}</div>
 								<div className="revamp-feature-content">
 									<h4>{f.title}</h4>
