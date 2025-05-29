@@ -28,7 +28,7 @@ const publicHolidays = [
   { title: 'Christmas', date: '2025-12-25' },
 ];
 
-export default function Calendar() {
+export default function Calendar({ small, toolbar }) {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -143,26 +143,29 @@ export default function Calendar() {
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
   return (
-    <div className="feature-page" style={{ background: '#f3f6fa', minHeight: '100vh', paddingBottom: 32 }}>
-      <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 18 }}>
-        <h2 className="revamp-title">Work Calendar (Project Events)</h2>
-        <button
-          onClick={() => navigate('/')}
-          className="revamp-cta-btn"
-          style={{ marginLeft: 16, marginRight: 32 }}
-        >
-          Back to Home
-        </button>
-      </div>
+    <div style={small ? { background: '#fff', borderRadius: 16, boxShadow: '0 2px 12px #e0e7ef', padding: 12, margin: 0, minWidth: 0 } : { background: '#f3f6fa', minHeight: '100vh', paddingBottom: 32 }}>
+      {!small && (
+        <div className="revamp-header-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 18 }}>
+          <h2 className="revamp-title">Work Calendar (Project Events)</h2>
+          <button
+            onClick={() => navigate('/')}
+            className="revamp-cta-btn"
+            style={{ marginLeft: 16, marginRight: 32 }}
+          >
+            Back to Home
+          </button>
+        </div>
+      )}
       <BigCalendar
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 560 }}
+        style={small ? { height: 340, fontSize: 13 } : { height: 560 }}
         eventPropGetter={eventPropGetter}
-        views={['month', 'agenda']}
+        views={['month']}
         popup
+        toolbar={toolbar !== undefined ? toolbar : !small}
       />
     </div>
   );
