@@ -9,7 +9,9 @@ import com.fsad.opm.model.Role;
 import com.fsad.opm.model.Status;
 import com.fsad.opm.model.User;
 import com.fsad.opm.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.fsad.opm.model.Status.*;
+import com.fsad.opm.service.EmailService;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
+
 
     public AuthResponse register(RegisterRequest request) {
         User user = User.builder()
@@ -97,6 +102,10 @@ public class AuthService {
             userToUpdate.setStatus(newStatus);
             userRepository.save(userToUpdate);
 
+            String content="Dear "+userToUpdate.getUsername()+", your registration is "+newStatus;
+            emailService.send(userToUpdate.getEmail(),"Registration status of opm Application",content);
+        
+        
             return ResponseEntity.ok("User status updated to " + newStatus);
     }
 }

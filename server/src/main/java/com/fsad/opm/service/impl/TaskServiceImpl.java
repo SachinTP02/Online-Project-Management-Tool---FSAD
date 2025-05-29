@@ -7,12 +7,16 @@ import com.fsad.opm.repository.ProjectRepository;
 import com.fsad.opm.repository.TaskRepository;
 import com.fsad.opm.repository.UserRepository;
 import com.fsad.opm.service.TaskService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.fsad.opm.service.EmailService;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class TaskServiceImpl implements TaskService {
     private final MilestoneRepository milestoneRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final EmailService emailService;
 
     @Override
     public Task createTask(TaskRequest request) {
@@ -38,6 +43,10 @@ public class TaskServiceImpl implements TaskService {
         }
         if (users.isEmpty()) {
             throw new RuntimeException("At least one user must be assigned to the task");
+        }
+        for(User user:users){
+            String content=user.getUsername()+", you are assigned with new task. Please check in opm application";
+            emailService.send(user.getEmail(),"task assigned",content);
         }
         Task task = Task.builder()
                 .name(request.getName())
