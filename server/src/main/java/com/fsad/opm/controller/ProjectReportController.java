@@ -36,9 +36,10 @@ public class ProjectReportController {
                 .body(pdf);
     }
 
-    // @PostMapping("/reports/email")
-    // public ResponseEntity<String> emailReport(@RequestBody ReportRequest request) {
-    //     reportService.emailReportPdf(request.getProjectId(), request.getPeriod(), request.getEmail());
-    //     return ResponseEntity.ok("Report emailed successfully");
-    // }
+    @PostMapping("/reports/email")
+    public ResponseEntity<String> emailReport(@RequestBody ReportRequest request) {
+        reportService.emailReportPdf(request.getProjectId(), request.getPeriod(), request.getEmail());
+        return ResponseEntity.ok("Report emailed successfully.");
+}
+
 }

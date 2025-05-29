@@ -93,6 +93,39 @@
 			<version>0.11.5</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- Thymeleaf -->
+		<dependency>
+   			 <groupId>org.springframework.boot</groupId>
+   			 <artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!-- Flying Saucer for HTML to PDF -->
+		<dependency>
+   			 <groupId>org.xhtmlrenderer</groupId>
+   			 <artifactId>flying-saucer-pdf</artifactId>
+   			 <version>9.1.22</version>
+		</dependency>
+
+		<!-- Optional: Explicit Thymeleaf Spring 6 support -->
+		<dependency>
+    		<groupId>org.thymeleaf</groupId>
+   		 	<artifactId>thymeleaf-spring6</artifactId>
+		</dependency>
+
+		<!-- Spring Boot Mail Support -->
+		<dependency>
+  		  <groupId>org.springframework.boot</groupId>
+   		  <artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!-- Jakarta Mail for MimeMessage and related classes -->
+		<dependency>
+  		  <groupId>com.sun.mail</groupId>
+  		  <artifactId>jakarta.mail</artifactId>
+  		  <version>2.0.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

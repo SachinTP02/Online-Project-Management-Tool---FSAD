@@ -31,39 +31,18 @@
  @RequiredArgsConstructor
 public class ProjectReportService {
 
+     private final EmailService emailService;
      private final ProjectReportRepository reportRepo;
      private final ProjectRepository projectRepo;
      private final UserRepository userRepo;
      private final ProjectService projectService;
      private final TaskService taskService;
      private final ReportPdfService reportPdfService;
-    // private final JavaMailSender mailSender;
-
-// i want to provide report based on user choice-weekly or monthly
-// it should include
-// -->I want project info
-// -->user assigned for project
-// -->all task list in a table - taskname, assigned dev, status, desc for the selected time period
-
-
-// give one more table-
-// users
-// all assigned task to user for selected time period
-// status of above tasks
-
-// bar charts to represent:for tasked of selcted period
-// completed task,
-// to do task,
-// in progess task
-
-// give one more chart between to be completed and completed for that period of time*/
-
+    
      public ReportResponse getReportForProject(Long projectId, String period) {
 
-         /*creating response object*/
          ReportResponse response = new ReportResponse();
 
-         //updating  start date
          LocalDate now = LocalDate.now();
          LocalDate fromDate = switch (period.toLowerCase()) {
              case "weekly" -> now.minusWeeks(1);
@@ -72,21 +51,18 @@ public class ProjectReportService {
          };
          response.setStartDate(fromDate);
 
-         //update project details
          Project project=projectService.getProjectById(projectId);
          if(project!=null){
             response.setProject(project);
          }
          response.setProject(project);
 
-         //update all task by projectId and for given period
          List<Task> tasks=taskFilterByPeriod(projectId,fromDate);
          response.setTaskByPeriod(tasks);
 
          HashMap<String,List<Task>> taskStatusMap=taskFilterByStatus(tasks);
          response.setTaskStatusMap(taskStatusMap);
          
-
          return response ;
      }
 
@@ -130,21 +106,12 @@ public class ProjectReportService {
         return reportPdfService.generatePdfFromReport(report);
     }
 
-    // public void emailReportPdf(Long projectId, String period, String email) {
-    //     byte[] pdf = generateReportPdf(projectId, period);
-
-    //     try {
-    //         MimeMessage message = mailSender.createMimeMessage();
-    //         MimeMessageHelper helper = new MimeMessageHelper(message, true);
-    //         helper.setTo(email);
-    //         helper.setSubject("Project Report");
-    //         helper.setText("Please find the attached project report.");
-    //         helper.addAttachment("report.pdf", new ByteArrayResource(pdf));
-    //         mailSender.send(message);
-    //     } catch (MessagingException e) {
-    //         throw new RuntimeException("Failed to send email", e);
-    //     }
-    // }
+    public void emailReportPdf(Long projectId, String period, String email) {
+    byte[] pdf = generateReportPdf(projectId, period);
+    String subject = "Project Report - " + period.toUpperCase();
+    String body = "Please find the attached project report for the selected period.";
+    emailService.sendWithAttachment(email, subject, body, pdf, "report.pdf");
+}
 
  }
 
