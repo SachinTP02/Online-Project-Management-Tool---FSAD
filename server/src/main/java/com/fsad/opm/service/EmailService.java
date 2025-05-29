@@ -4,29 +4,27 @@ import java.util.Properties;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.util.ByteArrayDataSource;
 
 @Service
 public class EmailService {
 
-    //private final ProjectReportService projectReportService;
+    private final String from = "taskforge.projectplanning@gmail.com";
+    private final String password = "hxkw ntcp dhot ftmt"; 
 
-    
-
-    public void send(String toEmail,String sub, String text) {
-
-        String to = toEmail;
-        String from = "taskforge.projectplanning@gmail.com";
-        String host = "smtp.gmail.com";
-        String subject=sub;
-        String content=text;
-
+    private Session createSession() {
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "465");
@@ -34,71 +32,58 @@ public class EmailService {
         props.put("mail.smtp.socketFactory.port", "465");
         props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtp.socketFactory.fallback", "false");
-        props.put("mail.smtp.connectiontimeout", "10000");  // 10 seconds
-        props.put("mail.smtp.timeout", "10000");            // 10 seconds
-        props.put("mail.smtp.writetimeout", "10000");
 
-        Session session = Session.getInstance(props,
-            new jakarta.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(from, "hxkw ntcp dhot ftmt");
-                }
-            });
+        return Session.getInstance(props, new jakarta.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        });
+    }
 
-        System.out.println(session);
-
+    public void send(String toEmail, String subject, String text) {
         try {
+            Session session = createSession();
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject(subject);
-            message.setText(content);
+            message.setText(text);
             Transport.send(message);
-            System.out.println("Sent successfully.");
-        } 
-        catch (MessagingException e) {
+            System.out.println("Email sent successfully.");
+        } catch (MessagingException e) {
             e.printStackTrace();
-        }   
-         }
+        }
+    }
 
-    //     public void emailReportPdf(Long projectId, String period, String toEmail) {
-    //     byte[] pdf = projectReportService.generateReportPdf(projectId, period); // You must implement this
+    public void sendWithAttachment(String toEmail, String subject, String bodyText, byte[] attachmentData, String fileName) {
+        try {
+            Session session = createSession();
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+            message.setSubject(subject);
 
-    //     Session session = createSession();
+            // Create multipart
+            Multipart multipart = new MimeMultipart();
 
-    //     try {
-    //         String to = toEmail;
-    //         String from = "taskforge.projectplanning@gmail.com";
-    //         String host = "smtp.gmail.com";
-    //         MimeMessage message = new MimeMessage(session);
-    //         message.setFrom(new InternetAddress(from));
-    //         message.setRecipients(
-    //             Message.RecipientType.TO, InternetAddress.parse(toEmail));
-    //         message.setSubject("Project Report");
+            // Text body
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText(bodyText);
+            multipart.addBodyPart(textPart);
 
-    //         // Create multipart content
-    //         Multipart multipart = new MimeMultipart();
+            // Attachment
+            MimeBodyPart attachmentPart = new MimeBodyPart();
+            DataSource dataSource = new ByteArrayDataSource(attachmentData, "application/pdf");
+            attachmentPart.setDataHandler(new DataHandler(dataSource));
+            attachmentPart.setFileName(fileName);
+            multipart.addBodyPart(attachmentPart);
 
-    //         // Body part
-    //         MimeBodyPart textPart = new MimeBodyPart();
-    //         textPart.setText("Please find the attached project report.");
-    //         multipart.addBodyPart(textPart);
+            message.setContent(multipart);
+            Transport.send(message);
 
-    //         // Attachment part
-    //         MimeBodyPart attachmentPart = new MimeBodyPart();
-    //         attachmentPart.setFileName("report.pdf");
-    //         attachmentPart.setContent(pdf, "application/pdf");
-    //         multipart.addBodyPart(attachmentPart);
-
-    //         // Set content
-    //         message.setContent(multipart);
-
-    //         // Send
-    //         Transport.send(message);
-    //         System.out.println("PDF report sent successfully.");
-    //     } catch (MessagingException e) {
-    //         throw new RuntimeException("Failed to send email with PDF", e);
-    //     }
-    // }
-
+            System.out.println("Email with PDF attachment sent successfully.");
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send email with attachment", e);
+        }
+    }
 }
