@@ -2,7 +2,7 @@ package com.fsad.opm.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.fsad.opm.model.TaskAttachment;
+
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -38,8 +38,4 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "user_id")     // Foreign key referencing User
     )
     private Set<User> assignedUsers;
-
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TaskAttachment> attachments;
-
 }

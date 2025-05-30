@@ -53,12 +53,30 @@ export default function Calendar({ small, toolbar }) {
           }),
         ]);
 
-        const projects = projectsRes.data.filter(project =>
+        // Defensive: ensure projects is always an array
+        let projectsData = projectsRes.data;
+        if (!Array.isArray(projectsData)) {
+          if (projectsData && typeof projectsData === 'object') {
+            projectsData = [projectsData];
+          } else {
+            projectsData = [];
+          }
+        }
+        const projects = projectsData.filter(project =>
           role === 'manager' || project.ownerUsername === username
         );
 
-        const tasks = tasksRes.data.filter(task =>
-          role === 'manager' || task.assignedUsers.some(user => user.username === username)
+        // Defensive: ensure tasks is always an array
+        let tasksData = tasksRes.data;
+        if (!Array.isArray(tasksData)) {
+          if (tasksData && typeof tasksData === 'object') {
+            tasksData = [tasksData];
+          } else {
+            tasksData = [];
+          }
+        }
+        const tasks = tasksData.filter(task =>
+          role === 'manager' || (Array.isArray(task.assignedUsers) && task.assignedUsers.some(user => user.username === username))
         );
 
         // Map projects and tasks to calendar events

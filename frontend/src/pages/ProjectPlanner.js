@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTasks, FaUser, FaPlusCircle } from 'react-icons/fa';
+import { FaTasks, FaPlusCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
@@ -46,7 +46,16 @@ export default function ProjectPlanner() {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setProjects(res.data);
+                // Defensive: ensure projects is always an array
+                let data = res.data;
+                if (!Array.isArray(data)) {
+                    if (data && typeof data === 'object') {
+                        data = [data];
+                    } else {
+                        data = [];
+                    }
+                }
+                setProjects(data);
             } catch (err) {
                 console.error(err);
                 setError('Failed to fetch projects.');
