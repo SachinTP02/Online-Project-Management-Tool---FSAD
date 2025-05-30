@@ -12,4 +12,5 @@ public interface ProjectService {
     ProjectResponse createProject(CreateProjectRequest requestDTO, List<MultipartFile> files);
     List<Project> getAllProjects();
     Project getProjectById(Long id);
+    List<Project> getProjectByUserName(String username);
 }

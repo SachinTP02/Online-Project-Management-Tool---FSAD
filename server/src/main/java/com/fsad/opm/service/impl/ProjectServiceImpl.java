@@ -7,12 +7,16 @@ import com.fsad.opm.repository.MilestoneRepository;
 import com.fsad.opm.repository.ProjectRepository;
 import com.fsad.opm.repository.UserRepository;
 import com.fsad.opm.service.ProjectService;
+import com.fsad.opm.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.fsad.opm.model.Status.ACCEPTED;
 
@@ -23,6 +27,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final MilestoneRepository milestoneRepository;
+    private final TaskService taskService;
 
     @Override
     public ProjectResponse createProject(CreateProjectRequest requestDTO, List<MultipartFile> files) {
@@ -88,4 +93,21 @@ public class ProjectServiceImpl implements ProjectService {
     public Project getProjectById(Long id) {
         return projectRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public List<Project> getProjectByUserName(String username) {
+        List<Task> tasks = taskService.getTaskByUsername(username);
+        Set<Long> seenProjectIds = new HashSet<>();
+        List<Project> projects = new ArrayList<>();
+
+        for (Task task : tasks) {
+            Project project = task.getProject();
+            if (project != null && seenProjectIds.add(project.getId())) {
+                projects.add(project);
+            }
+        }
+
+        return projects;
+    }
+
 }

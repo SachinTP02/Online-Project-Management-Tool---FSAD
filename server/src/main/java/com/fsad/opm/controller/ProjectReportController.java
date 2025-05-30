@@ -22,8 +22,13 @@ public class ProjectReportController {
     private final ProjectReportService reportService;
 
     @PostMapping("/reports")
-    public ResponseEntity<ReportResponse> getReports(@RequestBody ReportRequest request) {
-        return ResponseEntity.ok(reportService.getReportForProject(request.getProjectId(), request.getPeriod()));
+    public ResponseEntity<byte[]> getReportPdf(@RequestBody ReportRequest request) {
+        byte[] pdf = reportService.generateReportPdf(request.getProjectId(), request.getPeriod());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=report.pdf")
+                .body(pdf);
     }
 
     @PostMapping("/reports/download")
@@ -40,6 +45,6 @@ public class ProjectReportController {
     public ResponseEntity<String> emailReport(@RequestBody ReportRequest request) {
         reportService.emailReportPdf(request.getProjectId(), request.getPeriod(), request.getEmail());
         return ResponseEntity.ok("Report emailed successfully.");
-}
+    }
 
 }

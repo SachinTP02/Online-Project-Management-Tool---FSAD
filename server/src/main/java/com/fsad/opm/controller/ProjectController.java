@@ -45,4 +45,10 @@ public class ProjectController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/username/{username}")
+    public List<Project> getProjectsByUsername(@PathVariable String username) {
+        return projectService.getProjectByUserName(username);
+    }
+
+
 }

@@ -51,7 +51,7 @@ public class TaskController {
             @PathVariable Long taskId,
             @RequestBody Set<Long> userIds)
     {
-       taskService.removeAssignedUsers(taskId, userIds);
+        taskService.removeAssignedUsers(taskId, userIds);
     }
 
     @PutMapping("/{taskId}/status")
@@ -59,6 +59,11 @@ public class TaskController {
             @PathVariable Long taskId,
             @RequestParam TaskStatus status) {
         return ResponseEntity.ok(taskService.updateStatus(taskId, status));
+    }
+
+    @GetMapping("/{username}")
+    public List<Task> getTasksByUsername( @PathVariable String username) {
+        return taskService.getTaskByUsername(username);
     }
 
 }
