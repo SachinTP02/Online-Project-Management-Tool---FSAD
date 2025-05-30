@@ -19,10 +19,14 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @PostMapping
-    public Task createTask(@RequestBody TaskRequest request) {
-        return taskService.createTask(request);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Task createTask(
+            @RequestPart("data") TaskRequest request,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+
+        return taskService.createTask(request, files);
     }
+
 
     @GetMapping("/project/{projectId}")
     public List<Task> getTasksByProject(@PathVariable Long projectId) {

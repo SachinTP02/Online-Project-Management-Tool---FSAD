@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface TaskService
 {
-    Task createTask(TaskRequest request);
+    Task createTask(TaskRequest request, List<MultipartFile> files);
     List<Task> getTasksByProjectId(Long projectId);
     List<Task> getTasksByMilestoneId(Long milestoneId);
     List<Task> getAllTasks();

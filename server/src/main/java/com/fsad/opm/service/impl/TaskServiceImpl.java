@@ -29,7 +29,7 @@ public class TaskServiceImpl implements TaskService {
     private final EmailService emailService;
 
     @Override
-    public Task createTask(TaskRequest request) {
+    public Task createTask(TaskRequest request, List<MultipartFile> files) {
         Milestone milestone = milestoneRepository.findById(request.getMilestoneId())
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
 
@@ -44,10 +44,12 @@ public class TaskServiceImpl implements TaskService {
         if (users.isEmpty()) {
             throw new RuntimeException("At least one user must be assigned to the task");
         }
-        for(User user:users){
-            String content=user.getUsername()+", you are assigned with new task. Please check in opm application";
-            emailService.send(user.getEmail(),"task assigned",content);
+
+        for (User user : users) {
+            String content = user.getUsername() + ", you are assigned with new task. Please check in opm application";
+            emailService.send(user.getEmail(), "task assigned", content);
         }
+
         Task task = Task.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -57,8 +59,26 @@ public class TaskServiceImpl implements TaskService {
                 .status(TaskStatus.TODO)
                 .build();
 
+        if (files != null && !files.isEmpty()) {
+            Set<TaskAttachment> attachments = files.stream().map(file -> {
+                try {
+                    return TaskAttachment.builder()
+                            .attachment(file.getBytes())
+                            .attachmentName(file.getOriginalFilename())
+                            .attachmentType(file.getContentType())
+                            .task(task)
+                            .build();
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to process file", e);
+                }
+            }).collect(Collectors.toSet());
+
+            task.setAttachments(attachments);
+        }
+
         return taskRepository.save(task);
     }
+
 
     @Override
     public List<Task> getTasksByProjectId(Long projectId) {
