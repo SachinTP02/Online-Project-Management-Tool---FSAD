@@ -185,10 +185,11 @@ const Dashboard = () => {
   const username = localStorage.getItem('username');
   const userRole = localStorage.getItem('role');
 
-  // Filter features: only show Admin card if user is admin, always hide Calendar and Email Alerts
+  // Filter features: only show Admin card if user is admin, always hide Calendar, Email Alerts, and Storage
   const filteredFeatures = dashboardFeatures.filter(f => {
     if (f.title === 'Calendar') return false;
     if (f.title === 'Email Alerts') return false;
+    if (f.title === 'Storage') return false;
     if (f.title === 'Admin' && userRole?.toLowerCase() !== 'admin') return false;
     return true;
   });
