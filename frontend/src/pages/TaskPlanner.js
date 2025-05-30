@@ -182,29 +182,8 @@ const TaskPlanner = () => {
                 </svg>
             </div>
             <header className="landing-header landing-revamp-header">
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <button
-                        onClick={() => window.history.back()}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            fontSize: 26,
-                            cursor: 'pointer',
-                            marginLeft: 0, // flush with left edge
-                            marginRight: '1.5rem', // space between back and logo
-                            color: '#2563eb',
-                            padding: 0,
-                            lineHeight: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                        aria-label="Back"
-                    >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 19L9 12L15.5 5" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </button>
-                    <div className="logo-title landing-revamp-logo">
-                        <span className="logo-circle">OPM</span>
-                    </div>
+                <div className="logo-title landing-revamp-logo">
+                    <span className="logo-circle">OPM</span>
                 </div>
                 <nav className="landing-nav landing-revamp-nav">
                     {user ? (
@@ -353,9 +332,6 @@ const TaskPlanner = () => {
                                         width: '100%',
                                         marginBottom: 12,
                                     }}>
-                                        <label style={{ fontWeight: 500, marginBottom: 2 }}>
-                                            Task Name <span style={{ color: 'red' }}>*</span>
-                                        </label>
                                         <input
                                             type="text"
                                             name="name"
@@ -378,9 +354,6 @@ const TaskPlanner = () => {
                                             onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                                             onBlur={e => (e.target.style.border = '1.5px solid #d1d5db')}
                                         />
-                                        <label style={{ fontWeight: 500, marginBottom: 2, marginTop: 8 }}>
-                                            Task Description <span style={{ color: 'red' }}>*</span>
-                                        </label>
                                         <textarea
                                             name="description"
                                             placeholder="Task Description"
@@ -404,9 +377,6 @@ const TaskPlanner = () => {
                                             onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                                             onBlur={e => (e.target.style.border = '1.5px solid #d1d5db')}
                                         />
-                                        <label style={{ fontWeight: 500, marginBottom: 2, marginTop: 8 }}>
-                                            Assign Developers <span style={{ color: 'red' }}>*</span>
-                                        </label>
                                         {/* Developer checklist for multi-select */}
                                         <div style={{
                                             display: 'flex',

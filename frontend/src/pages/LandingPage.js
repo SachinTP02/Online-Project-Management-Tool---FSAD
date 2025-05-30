@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
-import { FaTasks, FaChartLine, FaBell, FaUserShield } from 'react-icons/fa';
+import { FaTasks, FaCalendarAlt, FaChartLine, FaCloudUploadAlt, FaBell, FaUserShield } from 'react-icons/fa';
 import Lottie from 'lottie-react';
 import dashboard3D from '../assets/3d-dashboard.json';
 import Login from './Login';
@@ -18,6 +18,16 @@ const features = [
 		desc: 'Track weekly/monthly progress, view, email, and print project status reports.',
 	},
 	{
+		icon: <FaCloudUploadAlt className="feature-icon" />,
+		title: 'Online Storage',
+		desc: 'Centralized file sharing and management for efficient collaboration.',
+	},
+	{
+		icon: <FaCalendarAlt className="feature-icon" />,
+		title: 'Calendars',
+		desc: 'Work calendar with holidays and important project dates.',
+	},
+	{
 		icon: <FaBell className="feature-icon" />,
 		title: 'Email Alerts',
 		desc: 'Automated email alerts for important project events and deadlines.',
@@ -30,13 +40,15 @@ const features = [
 	{
 		icon: <FaUserShield className="feature-icon" />,
 		title: 'Milestones',
-		desc: 'Add Milestones. Track and Plan the project cycle.',
+		desc: 'Add Milestones.',
 	},
 ];
 
 const featureRoutes = [
 	'/planner',
 	'/reporting',
+	'/storage',
+	'/calendar',
 	null, // Email Alerts (no direct page)
 	'/admin',
 	'/milestones',
@@ -87,16 +99,13 @@ export default function LandingPage() {
 	}, []);
 
 	// Handle feature card clicks - only allow if user is logged in
-	const handleFeatureClick = (route, featureIdx) => {
+	const handleFeatureClick = (route) => {
 		if (!user) {
+			// User not logged in - show login modal instead
 			setShowLogin(true);
 			return;
 		}
-		// Only allow Admins to click the Admin tile
-		if (features[featureIdx].title === 'Administration') {
-			const role = localStorage.getItem('role');
-			if (role !== 'admin') return;
-		}
+		// User is logged in - navigate to the route
 		if (route) {
 			navigate(route);
 		}
@@ -366,33 +375,28 @@ export default function LandingPage() {
 							// Remove top positioning, let rows stack naturally
 							return rows.flatMap((rowIdxs, row) =>
 								<div className="roadmap-row" key={row}>
-									{rowIdxs.map((featureIdx, col) => {
-										const isAdminTile = features[featureIdx].title === 'Administration';
-										const userRole = localStorage.getItem('role');
-										const adminDisabled = isAdminTile && userRole && userRole !== 'admin';
-										return (
-											<div
-												className="roadmap-step"
-												key={featureIdx}
-												tabIndex={0}
-												style={{
-													width: '160px',
-													maxWidth: '90vw',
-													opacity: (!user && featureRoutes[featureIdx]) || adminDisabled ? 0.7 : 1,
-													pointerEvents: featureRoutes[featureIdx] && !adminDisabled ? 'auto' : 'none',
-													outline: 'none',
-												}}
-												onClick={() => featureRoutes[featureIdx] && handleFeatureClick(featureRoutes[featureIdx], featureIdx)}
-											>
-												<div className="roadmap-dot" style={{ left: '50%', transform: 'translateX(-50%)' }} />
-												<div className="roadmap-content">
-													<div className="roadmap-feature-icon">{features[featureIdx].icon}</div>
-													<div className="roadmap-feature-title">{features[featureIdx].title}</div>
-													<div className="roadmap-feature-desc">{features[featureIdx].desc}</div>
-												</div>
+									{rowIdxs.map((featureIdx, col) => (
+										<div
+											className="roadmap-step"
+											key={featureIdx}
+											tabIndex={0}
+											style={{
+												width: '160px',
+												maxWidth: '90vw',
+												opacity: !user && featureRoutes[featureIdx] ? 0.7 : 1,
+												pointerEvents: featureRoutes[featureIdx] ? 'auto' : 'none',
+												outline: 'none',
+											}}
+											onClick={() => featureRoutes[featureIdx] && handleFeatureClick(featureRoutes[featureIdx])}
+										>
+											<div className="roadmap-dot" style={{ left: '50%', transform: 'translateX(-50%)' }} />
+											<div className="roadmap-content">
+												<div className="roadmap-feature-icon">{features[featureIdx].icon}</div>
+												<div className="roadmap-feature-title">{features[featureIdx].title}</div>
+												<div className="roadmap-feature-desc">{features[featureIdx].desc}</div>
 											</div>
-										);
-									})}
+										</div>
+									))}
 								</div>
 							);
 						})()}

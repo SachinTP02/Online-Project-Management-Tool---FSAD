@@ -10,19 +10,7 @@ const Milestones = () => {
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [user, setUser] = useState(null);
-    const [showName, setShowName] = useState(false);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const storedUsername = localStorage.getItem('username');
-        if (token && storedUsername) {
-            setUser({ username: storedUsername });
-        } else {
-            setUser(null);
-        }
-    }, []);
 
     useEffect(() => {
         const fetchMilestones = async () => {
@@ -48,75 +36,7 @@ const Milestones = () => {
     };
 
     return (
-        <div className="feature-page revamp-main-bg" style={{ minHeight: '100vh', padding: 0, background: '#f1f5f9' }}>
-            <header className="landing-header landing-revamp-header" style={{
-                width: '100vw',
-                margin: 0,
-                padding: '0.8',
-                left: 0,
-                right: 0,
-                borderRadius: 0,
-                position: 'relative',
-                boxSizing: 'border-box',
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <button
-                        onClick={() => navigate(-1)}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            fontSize: 26,
-                            cursor: 'pointer',
-                            marginLeft: 0, // flush with left edge
-                            marginRight: '1.5rem', // space between back and logo
-                            color: '#2563eb',
-                            padding: 0,
-                            lineHeight: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                        aria-label="Back"
-                    >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 19L9 12L15.5 5" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </button>
-                    <div className="logo-title landing-revamp-logo">
-                        <span className="logo-circle">OPM</span>
-                    </div>
-                </div>
-                <nav className="landing-nav landing-revamp-nav">
-                    {user ? (
-                        <div className="landing-user-info">
-                            <span
-                                className="landing-user-avatar revamp-user-avatar"
-                                onClick={() => setShowName(v => !v)}
-                                style={{ cursor: 'pointer' }}
-                                title="Show name"
-                            >
-                                {user.username[0].toUpperCase()}
-                            </span>
-                            {showName && (
-                                <span className="landing-user-name">{user.username}</span>
-                            )}
-                            <button
-                                className="nav-btn"
-                                onClick={() => {
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    setUser(null);
-                                    navigate('/');
-                                }}
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            <button className="nav-btn nav-btn-primary" onClick={() => navigate('/login')} style={{ marginRight: 12 }}>Login</button>
-                            <button className="nav-btn" onClick={() => navigate('/register')}>Register</button>
-                        </>
-                    )}
-                </nav>
-            </header>
+        <div className="feature-page revamp-main-bg" style={{ minHeight: '100vh', padding: 32, background: '#f1f5f9' }}>
             <div className="revamp-header-row" style={{
                 display: 'flex',
                 alignItems: 'center',
