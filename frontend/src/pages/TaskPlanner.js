@@ -332,6 +332,9 @@ const TaskPlanner = () => {
                                         width: '100%',
                                         marginBottom: 12,
                                     }}>
+                                        <label style={{ fontWeight: 500, marginBottom: 2 }}>
+                                            Task Name <span style={{ color: 'red' }}>*</span>
+                                        </label>
                                         <input
                                             type="text"
                                             name="name"
@@ -354,6 +357,9 @@ const TaskPlanner = () => {
                                             onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                                             onBlur={e => (e.target.style.border = '1.5px solid #d1d5db')}
                                         />
+                                        <label style={{ fontWeight: 500, marginBottom: 2, marginTop: 8 }}>
+                                            Task Description <span style={{ color: 'red' }}>*</span>
+                                        </label>
                                         <textarea
                                             name="description"
                                             placeholder="Task Description"
@@ -377,6 +383,9 @@ const TaskPlanner = () => {
                                             onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                                             onBlur={e => (e.target.style.border = '1.5px solid #d1d5db')}
                                         />
+                                        <label style={{ fontWeight: 500, marginBottom: 2, marginTop: 8 }}>
+                                            Assign Developers <span style={{ color: 'red' }}>*</span>
+                                        </label>
                                         {/* Developer checklist for multi-select */}
                                         <div style={{
                                             display: 'flex',

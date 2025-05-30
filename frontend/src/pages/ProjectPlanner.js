@@ -345,6 +345,9 @@ export default function ProjectPlanner() {
                             width: '100%',
                             marginBottom: 8,
                         }}>
+                            <label style={{ fontWeight: 500, marginBottom: 2 }}>
+                                Project name <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <input
                                 name="name"
                                 value={form.name}
@@ -366,6 +369,9 @@ export default function ProjectPlanner() {
                                 onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                                 onBlur={e => (e.target.style.border = '1.2px solid #d1d5db')}
                             />
+                            <label style={{ fontWeight: 500, marginBottom: 2, marginTop: 8 }}>
+                                Description <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <textarea
                                 name="description"
                                 value={form.description}
@@ -389,6 +395,9 @@ export default function ProjectPlanner() {
                                 onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                                 onBlur={e => (e.target.style.border = '1.2px solid #d1d5db')}
                             />
+                            <label style={{ fontWeight: 500, marginBottom: 2, marginTop: 8 }}>
+                                Milestone <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <select
                                 name="milestoneId"
                                 value={selectedMilestone ? selectedMilestone.id : ''}
@@ -420,9 +429,9 @@ export default function ProjectPlanner() {
                                     </option>
                                 ))}
                             </select>
-                            <div style={{ fontSize: 12, color: '#64748b', fontWeight: 500, marginBottom: 2, marginTop: 2 }}>
-                                Target Date (for when this project should be completed):
-                            </div>
+                            <label style={{ fontSize: 12, color: '#64748b', fontWeight: 500, marginBottom: 2, marginTop: 8 }}>
+                                Target Date (for when this project should be completed): <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <input
                                 name="targetDate"
                                 type="date"
@@ -446,6 +455,9 @@ export default function ProjectPlanner() {
                                 onFocus={e => (e.target.style.border = '1.5px solid #3b82f6')}
                                 onBlur={e => (e.target.style.border = '1.2px solid #d1d5db')}
                             />
+                            <label style={{ fontWeight: 500, marginBottom: 2, marginTop: 8 }}>
+                                Attach files (optional)
+                            </label>
                             <input
                                 type="file"
                                 name="files"
