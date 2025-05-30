@@ -1,6 +1,7 @@
 package com.fsad.opm.controller;
 
 import com.fsad.opm.dto.CreateProjectRequest;
+import com.fsad.opm.dto.ProjectAttachmentResponse;
 import com.fsad.opm.dto.ProjectResponse;
 import com.fsad.opm.model.Project;
 import com.fsad.opm.model.Task;
@@ -44,5 +45,11 @@ public class ProjectController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{projectId}/attachments")
+    public ResponseEntity<List<ProjectAttachmentResponse>> getAttachmentsByProjectId(@PathVariable Long projectId) {
+        List<ProjectAttachmentResponse> attachments = projectService.getAttachmentsByProjectId(projectId);
+        return ResponseEntity.ok(attachments);
     }
 }
