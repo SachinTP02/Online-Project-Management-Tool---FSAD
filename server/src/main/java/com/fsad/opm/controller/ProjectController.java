@@ -52,4 +52,13 @@ public class ProjectController {
         List<ProjectAttachmentResponse> attachments = projectService.getAttachmentsByProjectId(projectId);
         return ResponseEntity.ok(attachments);
     }
+
+    @PostMapping(value = "/{projectId}/attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> addAttachmentToProject(
+            @PathVariable Long projectId,
+            @RequestPart("files") List<MultipartFile> files) {
+
+        projectService.addAttachmentsToProject(projectId, files);
+        return ResponseEntity.ok("Attachments added successfully.");
+    }
 }

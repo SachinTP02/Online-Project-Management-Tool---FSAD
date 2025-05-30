@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -105,4 +106,33 @@ public class ProjectServiceImpl implements ProjectService {
                         .build())
                 .toList();
     }
+    @Override
+    public void addAttachmentsToProject(Long projectId, List<MultipartFile> files) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found with ID: " + projectId));
+
+        if (files != null && !files.isEmpty()) {
+            List<ProjectAttachment> newAttachments = files.stream().map(file -> {
+                try {
+                    return ProjectAttachment.builder()
+                            .attachment(file.getBytes())
+                            .attachmentName(file.getOriginalFilename())
+                            .attachmentType(file.getContentType())
+                            .project(project)
+                            .build();
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to process file: " + file.getOriginalFilename(), e);
+                }
+            }).toList();
+
+            if (project.getAttachments() == null) {
+                project.setAttachments(new ArrayList<>());
+            }
+            project.getAttachments().addAll(newAttachments);
+
+            // Persist new attachments
+            projectRepository.save(project);
+        }
+    }
+
 }

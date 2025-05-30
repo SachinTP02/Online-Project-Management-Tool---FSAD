@@ -73,4 +73,12 @@ public class TaskController {
         return ResponseEntity.ok(attachments);
     }
 
+    @PostMapping(value = "/{taskId}/attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> addAttachmentToTask(
+            @PathVariable Long taskId,
+            @RequestPart("files") List<MultipartFile> files) {
+
+        taskService.addAttachmentsToTask(taskId, files);
+        return ResponseEntity.ok("Attachments added successfully.");
+    }
 }

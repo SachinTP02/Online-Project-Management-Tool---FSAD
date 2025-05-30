@@ -14,4 +14,6 @@ public interface ProjectService {
     List<Project> getAllProjects();
     Project getProjectById(Long id);
     List<ProjectAttachmentResponse> getAttachmentsByProjectId(Long projectId);
+    void addAttachmentsToProject(Long projectId, List<MultipartFile> files);
+
 }

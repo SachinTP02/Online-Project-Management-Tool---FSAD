@@ -15,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.fsad.opm.service.EmailService;
 import org.springframework.web.multipart.MultipartFile;
@@ -145,6 +142,34 @@ public class TaskServiceImpl implements TaskService {
                         .base64Data(Base64.getEncoder().encodeToString(attachment.getAttachment()))
                         .build())
                 .toList();
+    }
+    @Override
+    public void addAttachmentsToTask(Long taskId, List<MultipartFile> files) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with ID: " + taskId));
+
+        if (files != null && !files.isEmpty()) {
+            List<TaskAttachment> newAttachments = files.stream().map(file -> {
+                try {
+                    return TaskAttachment.builder()
+                            .attachment(file.getBytes())
+                            .attachmentName(file.getOriginalFilename())
+                            .attachmentType(file.getContentType())
+                            .task(task)
+                            .build();
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to process file: " + file.getOriginalFilename(), e);
+                }
+            }).toList();
+
+            if (task.getAttachments() == null) {
+                task.setAttachments(new ArrayList<>());
+            }
+            task.getAttachments().addAll(newAttachments);
+
+            // Persist new attachments
+            taskRepository.save(task);
+        }
     }
 
 }

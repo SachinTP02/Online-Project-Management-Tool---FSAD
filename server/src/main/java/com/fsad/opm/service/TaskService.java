@@ -20,4 +20,5 @@ public interface TaskService
     Task updateStatus(Long taskId, TaskStatus status);
     Task removeAssignedUsers(Long taskId, Set<Long> assignedUserIds);
     List<TaskAttachmentResponse> getAttachmentsByTaskId(Long taskId);
+    void addAttachmentsToTask(Long taskId, List<MultipartFile> files);
 }
