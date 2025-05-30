@@ -62,6 +62,7 @@ export default function LandingPage() {
 	const [showLogin, setShowLogin] = useState(false);
 	const [showRegister, setShowRegister] = useState(false);
 	const [user, setUser] = useState(null);
+	const [showName, setShowName] = useState(false);
 	const navigate = useNavigate();
 
 	// Check for user on mount and when login state changes
@@ -247,19 +248,28 @@ export default function LandingPage() {
 				<nav className="landing-nav landing-revamp-nav">
 					{user ? (
 						<div className="landing-user-info">
-							<span className="landing-user-avatar">{user.username[0]}</span>
-							<span className="landing-user-name">{user.username}</span>
-							<button
-								className="nav-btn"
-								onClick={() => {
-									localStorage.removeItem('token');
-									localStorage.removeItem('username');
-									setUser(null);
-								}}
-							>
-								Logout
-							</button>
-						</div>
+								<span
+									className="landing-user-avatar revamp-user-avatar"
+									onClick={() => setShowName(v => !v)}
+									style={{ cursor: 'pointer' }}
+									title="Show name"
+								>
+									{user.username[0].toUpperCase()}
+								</span>
+								{showName && (
+									<span className="landing-user-name">{user.username}</span>
+								)}
+								<button
+									className="nav-btn"
+									onClick={() => {
+										localStorage.removeItem('token');
+										localStorage.removeItem('username');
+										setUser(null);
+									}}
+								>
+									Logout
+								</button>
+							</div>
 					) : (
 						<>
 							<button className="nav-btn nav-btn-primary" onClick={() => setShowLogin(true)} style={{ marginRight: 12 }}>Login</button>
