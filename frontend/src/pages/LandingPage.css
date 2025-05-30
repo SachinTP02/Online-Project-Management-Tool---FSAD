@@ -26,8 +26,8 @@
   flex-direction: column;
 }
 
-/* Doodle watermark background for project management/corporate theme */
-.landing-doodle-bg {
+/* Doodle watermark background for project management/corporate theme - opacity set to 0.07 for faint but visible effect [updated 2025-05-30] */
+.landing-root .landing-doodle-bg {
   position: fixed;
   top: 0;
   left: 0;
@@ -35,7 +35,7 @@
   height: 100vh;
   z-index: 0 !important;
   pointer-events: none;
-  opacity: 0.30 !important;
+  opacity: 0.17 !important;
   background: none;
   display: block;
 }
@@ -43,6 +43,7 @@
   width: 100vw !important;
   height: 100vh !important;
   display: block;
+  /* No opacity/filter here */
 }
 
 .landing-header {
@@ -923,4 +924,33 @@
   .roadmap-row {
     margin-top: 24px;
   }
+}
+
+.revamp-user-avatar {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.25rem;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px 0 rgba(79,140,255,0.13);
+  margin-right: 0.7rem;
+  letter-spacing: 0.02em;
+  font-family: 'Inter', sans-serif;
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+.revamp-user-avatar:hover {
+  box-shadow: 0 6px 24px 0 rgba(255,59,63,0.13);
+  transform: scale(1.05);
+}
+
+.landing-user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
 }

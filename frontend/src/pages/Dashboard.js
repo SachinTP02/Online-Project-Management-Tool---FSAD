@@ -42,6 +42,7 @@ const Dashboard = () => {
   const [assignedTasks, setAssignedTasks] = useState([]);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [assignmentsError, setAssignmentsError] = useState('');
+  const [showName, setShowName] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -287,8 +288,17 @@ const Dashboard = () => {
             </div>
             <nav className="landing-nav landing-revamp-nav">
               <div className="landing-user-info">
-                <span className="landing-user-avatar">{username ? username[0] : ''}</span>
-                <span className="landing-user-name">{username}</span>
+                <span
+                  className="landing-user-avatar revamp-user-avatar"
+                  onClick={() => setShowName(v => !v)}
+                  style={{ cursor: 'pointer' }}
+                  title="Show name"
+                >
+                  {username ? username[0].toUpperCase() : ''}
+                </span>
+                {showName && (
+                  <span className="landing-user-name">{username}</span>
+                )}
                 <button
                   className="nav-btn"
                   onClick={() => {
