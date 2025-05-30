@@ -1,3 +1,14 @@
+package com.fsad.opm.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.*;
+import jakarta.persistence.*;
+import lombok.*;
+
 @Entity
 @Table(name = "task_attachments")
 @Data

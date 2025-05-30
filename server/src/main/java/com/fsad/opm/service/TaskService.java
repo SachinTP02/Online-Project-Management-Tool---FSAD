@@ -3,6 +3,7 @@ package com.fsad.opm.service;
 import com.fsad.opm.dto.TaskRequest;
 import com.fsad.opm.model.Task;
 import com.fsad.opm.model.TaskStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
