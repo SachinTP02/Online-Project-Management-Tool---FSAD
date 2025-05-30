@@ -20,9 +20,19 @@ function Login({ onSuccess }) {
       if (!response.ok) throw new Error('Invalid credentials');
       const data = await response.json();
       localStorage.setItem('token', data.token);
+      // Set all possible role keys for compatibility
       if (data.role) {
         localStorage.setItem('role', data.role.toLowerCase());
+        localStorage.setItem('userRole', data.role.toLowerCase());
+      } else if (data.userRole) {
+        localStorage.setItem('role', data.userRole.toLowerCase());
+        localStorage.setItem('userRole', data.userRole.toLowerCase());
+      } else if (data.authorities && Array.isArray(data.authorities) && data.authorities.length > 0) {
+        const role = data.authorities[0].authority?.replace('ROLE_', '').toLowerCase();
+        localStorage.setItem('role', role);
+        localStorage.setItem('userRole', role);
       }
+      localStorage.setItem('username', username);
       if (onSuccess) onSuccess(username);
       else navigate('/dashboard');
     } catch (err) {
