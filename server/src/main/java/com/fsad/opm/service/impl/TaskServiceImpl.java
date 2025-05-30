@@ -1,5 +1,7 @@
 package com.fsad.opm.service.impl;
 
+import com.fsad.opm.dto.ProjectAttachmentResponse;
+import com.fsad.opm.dto.TaskAttachmentResponse;
 import com.fsad.opm.dto.TaskRequest;
 import com.fsad.opm.model.*;
 import com.fsad.opm.repository.MilestoneRepository;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -127,6 +130,21 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    @Override
+    public List<TaskAttachmentResponse> getAttachmentsByTaskId(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        return task.getAttachments().stream()
+                .map(attachment -> TaskAttachmentResponse.builder()
+                        .id(attachment.getId())
+                        .attachmentName(attachment.getAttachmentName())
+                        .attachmentType(attachment.getAttachmentType())
+                        .base64Data(Base64.getEncoder().encodeToString(attachment.getAttachment()))
+                        .build())
+                .toList();
     }
 
 }

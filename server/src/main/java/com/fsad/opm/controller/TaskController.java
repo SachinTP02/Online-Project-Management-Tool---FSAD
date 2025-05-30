@@ -1,5 +1,7 @@
 package com.fsad.opm.controller;
 
+import com.fsad.opm.dto.ProjectAttachmentResponse;
+import com.fsad.opm.dto.TaskAttachmentResponse;
 import com.fsad.opm.dto.TaskRequest;
 import com.fsad.opm.model.Task;
 import com.fsad.opm.model.TaskStatus;
@@ -63,6 +65,12 @@ public class TaskController {
             @PathVariable Long taskId,
             @RequestParam TaskStatus status) {
         return ResponseEntity.ok(taskService.updateStatus(taskId, status));
+    }
+
+    @GetMapping("/{taskId}/attachments")
+    public ResponseEntity<List<TaskAttachmentResponse>> getAttachmentsByTaskId(@PathVariable Long taskId) {
+        List<TaskAttachmentResponse> attachments = taskService.getAttachmentsByTaskId(taskId);
+        return ResponseEntity.ok(attachments);
     }
 
 }
