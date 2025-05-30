@@ -12,11 +12,13 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.fsad.opm.service.EmailService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
     private final EmailService emailService;
 
     @Override
-    public Task createTask(TaskRequest request) {
+    public Task createTask(TaskRequest request, List<MultipartFile> files) {
         Milestone milestone = milestoneRepository.findById(request.getMilestoneId())
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
 
@@ -37,17 +39,20 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
         Set<User> users = new HashSet<>(userRepository.findAllById(request.getAssignedUserIds()));
-
         if (users.size() != request.getAssignedUserIds().size()) {
             throw new RuntimeException("One or more users not found");
         }
         if (users.isEmpty()) {
             throw new RuntimeException("At least one user must be assigned to the task");
         }
-        for(User user:users){
-            String content=user.getUsername()+", you are assigned with new task. Please check in opm application";
-            emailService.send(user.getEmail(),"task assigned",content);
+
+        // Notify assigned users
+        for (User user : users) {
+            String content = user.getUsername() + ", you are assigned with a new task. Please check in the OPM application.";
+            emailService.send(user.getEmail(), "Task Assigned", content);
         }
+
+        // Create the task object
         Task task = Task.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -57,8 +62,26 @@ public class TaskServiceImpl implements TaskService {
                 .status(TaskStatus.TODO)
                 .build();
 
+        // Process file attachments if provided
+        if (files != null && !files.isEmpty()) {
+            List<TaskAttachment> attachments = files.stream().map(file -> {
+                try {
+                    return TaskAttachment.builder()
+                            .attachment(file.getBytes())
+                            .attachmentName(file.getOriginalFilename())
+                            .attachmentType(file.getContentType())
+                            .task(task) // Associate with task
+                            .build();
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to process file", e);
+                }
+            }).toList();
+            task.setAttachments(attachments);
+        }
+
         return taskRepository.save(task);
     }
+
 
     @Override
     public List<Task> getTasksByProjectId(Long projectId) {

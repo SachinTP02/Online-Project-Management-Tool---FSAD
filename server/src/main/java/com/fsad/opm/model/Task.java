@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,4 +39,8 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "user_id")     // Foreign key referencing User
     )
     private Set<User> assignedUsers;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskAttachment> attachments;
+
 }
