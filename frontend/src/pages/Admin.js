@@ -111,18 +111,42 @@ export default function Admin() {
 
   return (
     <div className="feature-page revamp-main-bg" style={{ minHeight: '100vh', padding: 0, background: '#f1f5f9' }}>
-            <header className="landing-header landing-revamp-header" style={{
-                width: '100vw',
-                margin: 0,
-                padding: '0.8',
-                left: 0,
-                right: 0,
-                borderRadius: 0,
-                position: 'relative',
-                boxSizing: 'border-box',
-            }}>
-        <div className="logo-title landing-revamp-logo">
-          <span className="logo-circle">OPM</span>
+      <header className="landing-header landing-revamp-header" style={{
+        width: '100vw',
+        margin: 0,
+        padding: 0,
+        left: 0,
+        right: 0,
+        borderRadius: 0,
+        position: 'relative',
+        boxSizing: 'border-box',
+        background: '#fff',
+        borderBottom: '1.5px solid #e0e7ef',
+        zIndex: 10
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: 26,
+              cursor: 'pointer',
+              marginLeft: 0, // flush with left edge
+              marginRight: '1.5rem', // space between back and logo
+              color: '#2563eb',
+              padding: 0,
+              lineHeight: 1,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            aria-label="Back"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 19L9 12L15.5 5" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <div className="logo-title landing-revamp-logo">
+            <span className="logo-circle">OPM</span>
+          </div>
         </div>
         <nav className="landing-nav landing-revamp-nav">
           {user ? (

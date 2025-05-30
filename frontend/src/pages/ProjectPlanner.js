@@ -231,8 +231,29 @@ export default function ProjectPlanner() {
                 </svg>
             </div>
             <header className="landing-header landing-revamp-header">
-                <div className="logo-title landing-revamp-logo">
-                    <span className="logo-circle">OPM</span>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <button
+                        onClick={() => navigate(-1)}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: 26,
+                            cursor: 'pointer',
+                            marginLeft: 0, // flush with left edge
+                            marginRight: '1.5rem', // space between back and logo
+                            color: '#2563eb',
+                            padding: 0,
+                            lineHeight: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                        aria-label="Back"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 19L9 12L15.5 5" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </button>
+                    <div className="logo-title landing-revamp-logo">
+                        <span className="logo-circle">OPM</span>
+                    </div>
                 </div>
                 <nav className="landing-nav landing-revamp-nav">
                     {user ? (
