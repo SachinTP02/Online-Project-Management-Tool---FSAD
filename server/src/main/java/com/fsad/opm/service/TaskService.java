@@ -16,4 +16,5 @@ public interface TaskService
     Task updateAssignedUsers(Long taskId, Set<Long> assignedUserIds);
     Task updateStatus(Long taskId, TaskStatus status);
     Task removeAssignedUsers(Long taskId, Set<Long> assignedUserIds);
+    List<Task> getTaskByUsername(String username);
 }

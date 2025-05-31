@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.fsad.opm.service.EmailService;
@@ -95,10 +96,16 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found"));
         if(task.getAssignedUsers().isEmpty())
         {
-          throw new RuntimeException("No users assigned to the task");
+            throw new RuntimeException("No users assigned to the task");
         }
         task.getAssignedUsers().removeIf(user -> assignedUserIds.contains(user.getId()));
         return taskRepository.save(task);
+    }
+
+    @Override
+    public List<Task> getTaskByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.map(value -> taskRepository.findByAssignedUsers_Id(value.getId())).orElse(null);
     }
 
     @Override

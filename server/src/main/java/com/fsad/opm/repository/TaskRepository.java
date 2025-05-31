@@ -8,4 +8,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByProjectId(Long projectId);
     List<Task> findByMilestoneId(Long milestoneId);
     List<Task> findByAssignedUsers_Username(String username);
+    List<Task> findByAssignedUsers_Id(Long userId);
 }
