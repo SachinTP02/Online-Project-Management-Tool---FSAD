@@ -12,12 +12,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import com.fsad.opm.service.EmailService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +31,7 @@ public class TaskServiceImpl implements TaskService {
     private final ProjectRepository projectRepository;
     private final EmailService emailService;
 
-    @Override
-    public Task createTask(TaskRequest request) {
+    public Task createTask(TaskRequest request, MultipartFile file) {
         Milestone milestone = milestoneRepository.findById(request.getMilestoneId())
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
 
@@ -38,28 +39,41 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
         Set<User> users = new HashSet<>(userRepository.findAllById(request.getAssignedUserIds()));
-
         if (users.size() != request.getAssignedUserIds().size()) {
             throw new RuntimeException("One or more users not found");
         }
         if (users.isEmpty()) {
             throw new RuntimeException("At least one user must be assigned to the task");
         }
-        for(User user:users){
-            String content=user.getUsername()+", you are assigned with new task. Please check in opm application";
-            emailService.send(user.getEmail(),"task assigned",content);
+
+        for (User user : users) {
+            String content = user.getUsername() + ", you are assigned with a new task. Please check in the OPM application.";
+            emailService.send(user.getEmail(), "Task Assigned", content);
         }
-        Task task = Task.builder()
+
+        Task.TaskBuilder builder = Task.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .project(project)
                 .milestone(milestone)
                 .assignedUsers(users)
-                .status(TaskStatus.TODO)
-                .build();
+                .status(TaskStatus.TODO);
 
+        // Process file
+        if (file != null && !file.isEmpty()) {
+            try {
+                builder.attachment(file.getBytes());
+                builder.attachmentName(file.getOriginalFilename());
+                builder.attachmentType(file.getContentType());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to process file", e);
+            }
+        }
+
+        Task task = builder.build();
         return taskRepository.save(task);
     }
+
 
     @Override
     public List<Task> getTasksByProjectId(Long projectId) {

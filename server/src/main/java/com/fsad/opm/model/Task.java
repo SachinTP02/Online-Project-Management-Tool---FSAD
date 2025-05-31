@@ -38,4 +38,15 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "user_id")     // Foreign key referencing User
     )
     private Set<User> assignedUsers;
+
+    @Lob
+    @Column(name = "attachment", columnDefinition = "LONGBLOB")
+    private byte[] attachment;
+
+    @Column(name = "attachment_name")
+    private String attachmentName;
+
+    @Column(name = "attachment_type")
+    private String attachmentType;
+
 }

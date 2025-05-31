@@ -5,8 +5,10 @@ import com.fsad.opm.model.Task;
 import com.fsad.opm.model.TaskStatus;
 import com.fsad.opm.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -19,10 +21,13 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @PostMapping
-    public Task createTask(@RequestBody TaskRequest request) {
-        return taskService.createTask(request);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Task createTask(
+            @RequestPart("data") TaskRequest request,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+        return taskService.createTask(request, file);
     }
+
 
     @GetMapping("/project/{projectId}")
     public List<Task> getTasksByProject(@PathVariable Long projectId) {
