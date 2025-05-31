@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ProjectService {
-    ProjectResponse createProject(CreateProjectRequest requestDTO, List<MultipartFile> files);
+    ProjectResponse createProject(CreateProjectRequest requestDTO, MultipartFile files);
     List<Project> getAllProjects();
     Project getProjectById(Long id);
     List<Project> getProjectsByOwnerUsername(String username);

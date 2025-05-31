@@ -29,7 +29,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final TaskRepository taskRepository;
 
     @Override
-    public ProjectResponse createProject(CreateProjectRequest requestDTO, List<MultipartFile> files) {
+    public ProjectResponse createProject(CreateProjectRequest requestDTO, MultipartFile file) {
 
         // Validate user
         userRepository.findByUsername(requestDTO.getOwnername())
@@ -42,34 +42,26 @@ public class ProjectServiceImpl implements ProjectService {
         Long milestoneId = requestDTO.getMilestoneId();
         Milestone milestone = milestoneId != null ? milestoneRepository.findById(milestoneId).orElse(null) : null;
 
-        Project project = Project.builder()
+        Project.ProjectBuilder builder = Project.builder()
                 .name(requestDTO.getName())
                 .description(requestDTO.getDescription())
                 .ownerUsername(requestDTO.getOwnername())
                 .startDate(milestone != null ? milestone.getStartDate() : requestDTO.getStartDate())
                 .endDate(milestone != null ? milestone.getEndDate() : requestDTO.getEndDate())
                 .targetDate(requestDTO.getTargetDate())
-                .milestone(milestone)
-                .build();
+                .milestone(milestone);
 
-        if (files != null && !files.isEmpty()) {
-            List<ProjectAttachment> attachments = files.stream()
-                    .map(file -> {
-                        try {
-                            return ProjectAttachment.builder()
-                                    .attachment(file.getBytes())
-                                    .attachmentName(file.getOriginalFilename())
-                                    .attachmentType(file.getContentType())
-                                    .project(project)
-                                    .build();
-                        } catch (IOException e) {
-                            throw new RuntimeException("Failed to process file", e);
-                        }
-                    })
-                    .toList();
-            project.setAttachments(attachments);
+        if (file != null && !file.isEmpty()) {
+            try {
+                builder.attachment(file.getBytes());
+                builder.attachmentName(file.getOriginalFilename());
+                builder.attachmentType(file.getContentType());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to process file", e);
+            }
         }
 
+        Project project = builder.build();
         Project savedProject = projectRepository.save(project);
 
         return ProjectResponse.builder()
@@ -82,6 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .endDate(savedProject.getEndDate())
                 .build();
     }
+
 
     @Override
     public List<Project> getAllProjects() {
