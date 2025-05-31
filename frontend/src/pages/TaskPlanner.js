@@ -68,6 +68,10 @@ const TaskPlanner = () => {
         fetchData();
     }, [projectId, token]);
 
+    useEffect(() => {
+        console.log('Project files:', project?.files); // Debug log for project files
+    }, [project]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -325,6 +329,27 @@ const TaskPlanner = () => {
                                     <div style={{ color: '#64748b', marginBottom: 6, fontWeight: 500 }}>Start: {project.startDate} | End: {project.endDate}</div>
                                     <div style={{ color: '#64748b', marginBottom: 6, fontWeight: 500 }}>Milestone: {milestone ? `${milestone.name ? milestone.name + ' ' : ''}(ID: ${milestone.id})` : 'None'}</div>
                                     <div style={{ color: '#64748b', fontSize: 15 }}>{project.description}</div>
+                                    {project.files && project.files.length > 0 && (
+                                        <button
+                                            style={{
+                                                marginTop: 10,
+                                                padding: '10px 20px',
+                                                background: '#2563eb',
+                                                color: '#fff',
+                                                fontWeight: 600,
+                                                borderRadius: 8,
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 1px 4px #dbeafe',
+                                                transition: 'background 0.2s',
+                                            }}
+                                            onMouseOver={e => (e.target.style.background = '#1d4ed8')}
+                                            onMouseOut={e => (e.target.style.background = '#2563eb')}
+                                            onClick={() => window.open(`/attachments/${project.id}`, '_blank')}
+                                        >
+                                            View Attachments ({project.files.length})
+                                        </button>
+                                    )}
                                 </div>
                             )}
                             {/* Task Creation Form (only for managers/admins) */}
