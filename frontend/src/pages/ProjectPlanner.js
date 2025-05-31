@@ -41,12 +41,14 @@ export default function ProjectPlanner() {
             setError('');
             try {
                 const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:8080/api/projects', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                // Defensive: ensure projects is always an array
+                const username = localStorage.getItem('username');
+                const res = await axios.get(`http://localhost:8080/api/projects/assigned-or-owned?username=${username}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
                 let data = res.data;
                 if (!Array.isArray(data)) {
                     if (data && typeof data === 'object') {
