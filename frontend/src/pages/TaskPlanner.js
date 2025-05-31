@@ -350,6 +350,27 @@ const TaskPlanner = () => {
                                             View Attachments ({project.files.length})
                                         </button>
                                     )}
+                                    {project && project.attachmentName && (
+                                        <button
+                                            style={{
+                                                marginTop: 10,
+                                                padding: '10px 20px',
+                                                background: '#2563eb',
+                                                color: '#fff',
+                                                fontWeight: 600,
+                                                borderRadius: 8,
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 1px 4px #dbeafe',
+                                                transition: 'background 0.2s',
+                                            }}
+                                            onMouseOver={e => (e.target.style.background = '#1d4ed8')}
+                                            onMouseOut={e => (e.target.style.background = '#2563eb')}
+                                            onClick={() => window.open(`/api/projects/${project.id}/attachment`, '_blank')}
+                                        >
+                                            View Attachment ({project.attachmentName})
+                                        </button>
+                                    )}
                                 </div>
                             )}
                             {/* Task Creation Form (only for managers/admins) */}
