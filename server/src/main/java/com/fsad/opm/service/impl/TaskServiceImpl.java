@@ -104,8 +104,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getTaskByUsername(String username) {
-        Optional<User> user=userRepository.findByUsername(username);
-        return user.map(value -> taskRepository.findTasksByUserId(value.getId())).orElse(null);
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.map(value -> taskRepository.findByAssignedUsers_Id(value.getId())).orElse(null);
     }
 
     @Override
