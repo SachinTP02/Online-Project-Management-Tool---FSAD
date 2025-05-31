@@ -159,7 +159,7 @@ export default function Admin() {
       <header className="landing-header landing-revamp-header" style={{
         width: '100vw',
         margin: 0,
-        padding: 0,
+        padding: '2rem 2rem 2rem 2rem', // Increased top and bottom padding
         left: 0,
         right: 0,
         borderRadius: 0,
@@ -179,6 +179,7 @@ export default function Admin() {
               cursor: 'pointer',
               marginLeft: 0, // flush with left edge
               marginRight: '1.5rem', // space between back and logo
+              marginTop: 8,
               color: '#2563eb',
               padding: 0,
               lineHeight: 1,
@@ -234,7 +235,7 @@ export default function Admin() {
         borderRadius: '1.1rem',
         boxShadow: '0 2px 8px 0 rgba(44,62,80,0.06)',
         border: '1.5px solid #e0e7ef',
-        padding: '1.5rem 2.2rem',
+        padding: '2.2rem 2.2rem', // Increased top and bottom padding
         marginBottom: 28,
         marginTop: 0,
         marginLeft: 0,
