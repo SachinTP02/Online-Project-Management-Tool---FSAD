@@ -11,6 +11,8 @@ import {
 } from 'react-icons/pi';
 import Calendar from './Calendar';
 import './Dashboard.css';
+import ComplaintModal from './ComplaintModal';
+import UserComplaints from './UserComplaints';
 
 const dashboardFeatures = [
   {
@@ -43,6 +45,8 @@ const Dashboard = () => {
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [assignmentsError, setAssignmentsError] = useState('');
   const [showName, setShowName] = useState(false);
+  const [showComplaint, setShowComplaint] = useState(false);
+  const [showUserComplaints, setShowUserComplaints] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -190,6 +194,18 @@ const Dashboard = () => {
     if (f.title === 'Admin' && userRole?.toLowerCase() !== 'admin') return false;
     return true;
   });
+
+  const handleComplaintSubmit = async (content) => {
+    const token = localStorage.getItem('token');
+    await fetch('http://localhost:8080/api/complaints', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ username, content })
+    });
+  };
 
   return (
     <div className="dashboard-root landing-revamp">
@@ -386,6 +402,51 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      {/* Floating Complaint Button */}
+      {username && (
+        <button
+          onClick={() => setShowComplaint(true)}
+          style={{
+            position: 'fixed',
+            right: 32, // changed from left: 32
+            bottom: 32,
+            zIndex: 1001,
+            background: '#2563eb',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '50%',
+            width: 60,
+            height: 60,
+            fontSize: 32,
+            boxShadow: '0 2px 8px #93c5fd',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          title="Submit Complaint"
+        >
+          !
+        </button>
+      )}
+      {/* Add a button to open user complaints table */}
+      {username && (
+        <button
+          onClick={() => setShowUserComplaints(true)}
+          style={{ position: 'fixed', right: 32, bottom: 110, zIndex: 1001, background: '#fff', color: '#2563eb', border: '2px solid #2563eb', borderRadius: 12, padding: '8px 18px', fontWeight: 600, fontSize: 15, boxShadow: '0 1px 4px #dbeafe', cursor: 'pointer' }}
+        >
+          My Complaints
+        </button>
+      )}
+      {showUserComplaints && (
+        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.2)', zIndex: 1002, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#fff', borderRadius: 12, padding: 32, minWidth: 340, boxShadow: '0 2px 16px #cbd5e1', position: 'relative' }}>
+            <button onClick={() => setShowUserComplaints(false)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer' }}>&times;</button>
+            <UserComplaints />
+          </div>
+        </div>
+      )}
+      <ComplaintModal show={showComplaint} onClose={() => setShowComplaint(false)} onSubmit={handleComplaintSubmit} />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUserShield } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
+import ComplaintModal from './ComplaintModal';
 
 export default function Admin() {
   const [pendingUsers, setPendingUsers] = useState([]);
@@ -12,6 +13,10 @@ export default function Admin() {
   const userRole = localStorage.getItem('role');
   const isAdmin = userRole === 'admin';
   const navigate = useNavigate();
+  const [complaints, setComplaints] = useState([]);
+  const [loadingComplaints, setLoadingComplaints] = useState(false);
+  const [complaintError, setComplaintError] = useState('');
+  const [reply, setReply] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -64,6 +69,46 @@ export default function Admin() {
         setPendingUsers(pendingUsers.filter(u => u.username !== username));
       })
       .catch(() => setUserError('Failed to update user status'));
+  };
+
+  useEffect(() => {
+    fetchComplaints();
+  }, []);
+
+  const fetchComplaints = async () => {
+    setLoadingComplaints(true);
+    setComplaintError('');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setComplaintError('You are not logged in. Please log in again.');
+      setLoadingComplaints(false);
+      return;
+    }
+    try {
+      const res = await fetch('http://localhost:8080/api/complaints', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Failed to fetch complaints');
+      setComplaints(await res.json());
+    } catch (err) {
+      setComplaintError('Failed to load complaints');
+    } finally {
+      setLoadingComplaints(false);
+    }
+  };
+
+  const handleReply = async (id) => {
+    const token = localStorage.getItem('token');
+    await fetch(`http://localhost:8080/api/complaints/${id}/close`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ adminComment: reply[id] || '' })
+    });
+    setReply({ ...reply, [id]: '' });
+    fetchComplaints();
   };
 
   if (!isAdmin) {
@@ -276,6 +321,48 @@ export default function Admin() {
             {pendingUsers.length === 0 && !loadingUsers && (
               <tr><td colSpan={4} style={{ textAlign: 'center', color: '#888', padding: 16 }}>No pending users</td></tr>
             )}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ maxWidth: 900, margin: '0 auto', marginTop: 32 }}>
+        <h3 style={{ fontWeight: 600, fontSize: 20 }}>Complaints</h3>
+        {loadingComplaints ? <div>Loading complaints...</div> : null}
+        {complaintError && <div style={{ color: 'red', marginBottom: 8 }}>{complaintError}</div>}
+        <table style={{ width: '100%', background: '#fff', borderRadius: 10, boxShadow: '0 1px 4px #e0e7ef', marginBottom: 24 }}>
+          <thead>
+            <tr style={{ background: '#f1f5f9' }}>
+              <th style={{ padding: 10 }}>User</th>
+              <th style={{ padding: 10 }}>Content</th>
+              <th style={{ padding: 10 }}>Status</th>
+              <th style={{ padding: 10 }}>Admin Comment</th>
+              <th style={{ padding: 10 }}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {complaints.length === 0 && !loadingComplaints && (
+              <tr><td colSpan={5} style={{ textAlign: 'center', color: '#888', padding: 16 }}>No complaints</td></tr>
+            )}
+            {complaints.map(c => (
+              <tr key={c.id}>
+                <td style={{ padding: 10 }}>{c.username}</td>
+                <td style={{ padding: 10 }}>{c.content}</td>
+                <td style={{ padding: 10 }}>{c.status}</td>
+                <td style={{ padding: 10 }}>{c.adminComment || (c.status === 'OPEN' ? (
+                  <input
+                    type="text"
+                    value={reply[c.id] || ''}
+                    onChange={e => setReply({ ...reply, [c.id]: e.target.value })}
+                    placeholder="Type reply..."
+                    style={{ width: 120 }}
+                  />
+                ) : '')}</td>
+                <td style={{ padding: 10 }}>
+                  {c.status === 'OPEN' ? (
+                    <button style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 12px', cursor: 'pointer' }} onClick={() => handleReply(c.id)}>Reply & Close</button>
+                  ) : 'Closed'}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
