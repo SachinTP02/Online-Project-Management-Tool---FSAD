@@ -9,6 +9,7 @@ import com.fsad.opm.repository.UserRepository;
 import com.fsad.opm.repository.TaskRepository;
 import com.fsad.opm.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -104,4 +105,23 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return List.copyOf(projects);
     }
+    @Override
+    public ResponseEntity<byte[]> getProjectAttachment(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
+
+        if (project.getAttachment() == null) {
+            throw new RuntimeException("No attachment found for project with id: " + projectId);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(project.getAttachmentType()));
+        headers.setContentDisposition(ContentDisposition
+                .attachment()
+                .filename(project.getAttachmentName())
+                .build());
+
+        return new ResponseEntity<>(project.getAttachment(), headers, HttpStatus.OK);
+    }
+
 }

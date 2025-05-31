@@ -56,4 +56,10 @@ public class ProjectController {
     public List<Project> getProjectsAssignedOrOwned(@RequestParam String username) {
         return projectService.getProjectsAssignedOrOwned(username);
     }
+
+    @GetMapping("/{projectId}/attachment")
+    public ResponseEntity<byte[]> getProjectAttachment(@PathVariable Long projectId) {
+        return projectService.getProjectAttachment(projectId);
+    }
+
 }
