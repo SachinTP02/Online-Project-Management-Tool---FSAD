@@ -9,6 +9,7 @@ import com.fsad.opm.repository.UserRepository;
 import com.fsad.opm.repository.TaskRepository;
 import com.fsad.opm.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final TaskRepository taskRepository;
 
     @Override
-    public ProjectResponse createProject(CreateProjectRequest requestDTO, List<MultipartFile> files) {
+    public ProjectResponse createProject(CreateProjectRequest requestDTO, MultipartFile file) {
 
         // Validate user
         userRepository.findByUsername(requestDTO.getOwnername())
@@ -42,34 +43,26 @@ public class ProjectServiceImpl implements ProjectService {
         Long milestoneId = requestDTO.getMilestoneId();
         Milestone milestone = milestoneId != null ? milestoneRepository.findById(milestoneId).orElse(null) : null;
 
-        Project project = Project.builder()
+        Project.ProjectBuilder builder = Project.builder()
                 .name(requestDTO.getName())
                 .description(requestDTO.getDescription())
                 .ownerUsername(requestDTO.getOwnername())
                 .startDate(milestone != null ? milestone.getStartDate() : requestDTO.getStartDate())
                 .endDate(milestone != null ? milestone.getEndDate() : requestDTO.getEndDate())
                 .targetDate(requestDTO.getTargetDate())
-                .milestone(milestone)
-                .build();
+                .milestone(milestone);
 
-        if (files != null && !files.isEmpty()) {
-            List<ProjectAttachment> attachments = files.stream()
-                    .map(file -> {
-                        try {
-                            return ProjectAttachment.builder()
-                                    .attachment(file.getBytes())
-                                    .attachmentName(file.getOriginalFilename())
-                                    .attachmentType(file.getContentType())
-                                    .project(project)
-                                    .build();
-                        } catch (IOException e) {
-                            throw new RuntimeException("Failed to process file", e);
-                        }
-                    })
-                    .toList();
-            project.setAttachments(attachments);
+        if (file != null && !file.isEmpty()) {
+            try {
+                builder.attachment(file.getBytes());
+                builder.attachmentName(file.getOriginalFilename());
+                builder.attachmentType(file.getContentType());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to process file", e);
+            }
         }
 
+        Project project = builder.build();
         Project savedProject = projectRepository.save(project);
 
         return ProjectResponse.builder()
@@ -82,6 +75,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .endDate(savedProject.getEndDate())
                 .build();
     }
+
 
     @Override
     public List<Project> getAllProjects() {
@@ -111,4 +105,23 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return List.copyOf(projects);
     }
+    @Override
+    public ResponseEntity<byte[]> getProjectAttachment(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
+
+        if (project.getAttachment() == null) {
+            throw new RuntimeException("No attachment found for project with id: " + projectId);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(project.getAttachmentType()));
+        headers.setContentDisposition(ContentDisposition
+                .attachment()
+                .filename(project.getAttachmentName())
+                .build());
+
+        return new ResponseEntity<>(project.getAttachment(), headers, HttpStatus.OK);
+    }
+
 }

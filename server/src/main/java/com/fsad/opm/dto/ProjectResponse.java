@@ -17,4 +17,6 @@ public class ProjectResponse {
     private Long milestoneId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String attachmentName;
+    private String attachmentType;
 }

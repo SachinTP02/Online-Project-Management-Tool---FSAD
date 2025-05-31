@@ -121,10 +121,10 @@ export default function ProjectPlanner() {
                 })
             );
 
-            // Append all selected files
-            form.files.forEach(file => {
-                formData.append('files', file); // 'files' should match controller param name
-            });
+            // Append the selected file (if any) as 'file', not 'files'
+            if (form.files.length > 0) {
+                formData.append('file', form.files[0]);
+            }
 
             const res = await axios.post('http://localhost:8080/api/projects', formData, {
                 headers: {
@@ -483,9 +483,8 @@ export default function ProjectPlanner() {
                             </label>
                             <input
                                 type="file"
-                                name="files"
-                                multiple
-                                onChange={e => setForm({ ...form, files: Array.from(e.target.files) })}
+                                name="file"
+                                onChange={e => setForm({ ...form, files: e.target.files.length > 0 ? [e.target.files[0]] : [] })}
                                 accept="*"
                                 className="revamp-input"
                                 style={{

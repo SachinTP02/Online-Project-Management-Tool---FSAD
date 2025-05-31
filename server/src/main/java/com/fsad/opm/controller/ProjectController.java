@@ -24,11 +24,12 @@ public class ProjectController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProjectResponse> createProject(
             @RequestPart("data") CreateProjectRequest requestDTO,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        ProjectResponse response = projectService.createProject(requestDTO, files);
+        ProjectResponse response = projectService.createProject(requestDTO, file);
         return ResponseEntity.ok(response);
     }
+
 
 
     @GetMapping
@@ -55,4 +56,10 @@ public class ProjectController {
     public List<Project> getProjectsAssignedOrOwned(@RequestParam String username) {
         return projectService.getProjectsAssignedOrOwned(username);
     }
+
+    @GetMapping("/{projectId}/attachment")
+    public ResponseEntity<byte[]> getProjectAttachment(@PathVariable Long projectId) {
+        return projectService.getProjectAttachment(projectId);
+    }
+
 }
