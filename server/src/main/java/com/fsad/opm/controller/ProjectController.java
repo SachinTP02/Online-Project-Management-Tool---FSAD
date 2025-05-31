@@ -45,4 +45,14 @@ public class ProjectController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/owned")
+    public List<Project> getProjectsOwnedByUser(@RequestParam String username) {
+        return projectService.getProjectsByOwnerUsername(username);
+    }
+
+    @GetMapping("/assigned-or-owned")
+    public List<Project> getProjectsAssignedOrOwned(@RequestParam String username) {
+        return projectService.getProjectsAssignedOrOwned(username);
+    }
 }
