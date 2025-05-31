@@ -69,10 +69,10 @@ const Dashboard = () => {
       await fetch('/projects', { headers });
 
       // Fetch tasks
-      await fetch('/tasks', { headers });
+      await fetch('/api/tasks', { headers });
 
       // Fetch milestones
-      await fetch('/milestones', { headers });
+      await fetch('/api/milestones', { headers });
 
     } catch (err) {
       console.error('Dashboard fetch error:', err);
@@ -93,16 +93,12 @@ const Dashboard = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         };
-        // Fetch all projects
-        const projRes = await fetch('/api/projects', { headers });
+        const projRes = await fetch(`/api/projects/assigned-or-owned?username=${username}`, { headers });
         let projects = projRes.ok ? await projRes.json() : [];
-        // Filter projects where user is owner or (optionally) assigned (if you have such a field)
-        projects = Array.isArray(projects) ? projects.filter(p => p.ownerUsername === username || p.ownername === username) : [];
-        setAssignedProjects(projects);
+        setAssignedProjects(Array.isArray(projects) ? projects : []);
         // Fetch all tasks
         const taskRes = await fetch('/api/tasks', { headers });
         let tasks = taskRes.ok ? await taskRes.json() : [];
-        // Filter tasks where user is assigned
         tasks = Array.isArray(tasks) ? tasks.filter(task => {
           if (Array.isArray(task.assignedUsers)) {
             return task.assignedUsers.some(u => u.username === username);
@@ -153,21 +149,22 @@ const Dashboard = () => {
       border: '1.5px solid #e0e7ef',
       borderRadius: 18,
       boxShadow: '0 2px 8px 0 rgba(44,62,80,0.04)',
-      padding: '1.5rem 1.2rem',
+      padding: '1.1rem 0.8rem', // reduce padding for a smaller card
       margin: '0.7rem 0',
       display: 'flex',
       alignItems: 'flex-start',
       gap: '1.2rem',
       minWidth: 0,
-      maxWidth: 520,
+      maxWidth: 420, // reduce max width for a more compact look
       width: '100%',
       transition: 'box-shadow 0.18s',
+      marginBottom: '2.2rem', // increase space between cards
     }}>
-      <div style={{ fontSize: 32, color: '#3b82f6', flexShrink: 0 }}>{icon}</div>
+      <div style={{ fontSize: 28, color: '#3b82f6', flexShrink: 0 }}>{icon}</div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 700, fontSize: '1.13rem', color: '#232946', marginBottom: 2 }}>{title}</div>
-        {subtitle && <div style={{ color: '#6c6f7b', fontSize: '1.01rem', fontWeight: 500, marginBottom: 2 }}>{subtitle}</div>}
-        {desc && <div style={{ color: '#a0a1b5', fontSize: '0.98rem', marginTop: 2 }}>{desc}</div>}
+        <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#232946', marginBottom: 2 }}>{title}</div>
+        {subtitle && <div style={{ color: '#6c6f7b', fontSize: '0.97rem', fontWeight: 500, marginBottom: 2 }}>{subtitle}</div>}
+        {desc && <div style={{ color: '#a0a1b5', fontSize: '0.93rem', marginTop: 2 }}>{desc}</div>}
       </div>
     </div>
   );
@@ -319,10 +316,12 @@ const Dashboard = () => {
             width: '100%',
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'center',
+            justifyContent: 'flex-start', // change from center to flex-start
             alignItems: 'flex-start',
             gap: '2.5rem',
             margin: '1.5rem 0 0.5rem 0',
+            marginLeft: '0', // reset marginLeft
+            paddingLeft: '116px', // shift columns 3 units (3*32px) to the left visually
           }}>
             {/* Projects */}
             <div style={{ flex: 1, maxWidth: 420 }}>
